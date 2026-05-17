@@ -1,0 +1,59 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.pyo
+
+# ── Entornos virtuales ────────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# ── Variables de entorno (¡NUNCA subir .env con credenciales!) ────────────────
+.env
+.env.local
+.env.*.local
+!.env.example
+!.env.production
+
+# ── Base de datos SQLite ──────────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Archivos subidos por usuarios ─────────────────────────────────────────────
+backend/uploads/
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Node / Frontend ───────────────────────────────────────────────────────────
+node_modules/
+dist/
+.cache/
+frontend/dist/
+
+# ── IDEs ──────────────────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Alembic migrations (si se usan) ──────────────────────────────────────────
+alembic/versions/*.py
+
+# ── Scripts temporales ────────────────────────────────────────────────────────
+backend/check_db.py
+backend/add_students.py
