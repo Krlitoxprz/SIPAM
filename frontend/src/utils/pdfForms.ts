@@ -2057,12 +2057,12 @@ export function generarFO05(data: {
     startY: y, margin: { left: M, right: M },
     body: [
       [
-        { content: 'LUGAR DE ORIGEN', styles: { ...LABEL_STYLE, rowSpan: 2, valign: 'middle' as const, cellWidth: 38 } },
+        { content: 'LUGAR DE ORIGEN', rowSpan: 2, styles: { ...LABEL_STYLE, valign: 'middle' as const, cellWidth: 38 } } as any,
         { content: 'SALIDA', styles: { ...LABEL_STYLE, halign: 'center' as const, cellWidth: 22 } },
         { content: `${fmtDate(data.practica.fecha_inicio)}  ${data.practica.hora_salida ?? ''}`, styles: VALUE_STYLE },
         { content: 'SEDE', styles: { ...LABEL_STYLE, cellWidth: 20 } },
         { content: origen ? (origen.municipio ?? origen.lugar) : 'Neiva', styles: VALUE_STYLE },
-        { content: 'LUGAR DE DESTINO', styles: { ...LABEL_STYLE, rowSpan: 2, valign: 'middle' as const, cellWidth: 38 } },
+        { content: 'LUGAR DE DESTINO', rowSpan: 2, styles: { ...LABEL_STYLE, valign: 'middle' as const, cellWidth: 38 } } as any,
         { content: 'LLEGADA', styles: { ...LABEL_STYLE, halign: 'center' as const, cellWidth: 22 } },
         { content: `${fmtDate(data.practica.fecha_inicio)}  ${data.practica.hora_salida ?? ''}`, styles: VALUE_STYLE },
       ],

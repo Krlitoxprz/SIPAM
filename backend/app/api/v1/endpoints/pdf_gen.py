@@ -63,7 +63,13 @@ def _fmt_cop(value) -> str:
 
 
 def _render_pdf(template_name: str, context: dict) -> bytes:
-    """Renderiza el template Jinja2 y convierte a PDF con WeasyPrint."""
+    """Renderiza el template Jinja2 y convierte a PDF con WeasyPrint.
+
+    NOTA: Esta función es síncrona y CPU-intensiva. Los endpoints que la llaman
+    están declarados como `def` (no `async def`) deliberadamente, para que
+    FastAPI los envíe automáticamente al threadpool externo (anyio) y nunca
+    bloqueen el event loop principal.
+    """
     try:
         from weasyprint import HTML
     except ImportError:

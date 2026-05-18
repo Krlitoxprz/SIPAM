@@ -18,12 +18,12 @@ env/
 .env/
 ENV/
 
-# ── Variables de entorno (¡NUNCA subir .env con credenciales!) ────────────────
+# ── Variables de entorno (¡NUNCA subir archivos con credenciales!) ────────────
 .env
 .env.local
 .env.*.local
-!.env.example
-!.env.production
+.env.production
+!.env.production.example
 
 # ── Base de datos SQLite ──────────────────────────────────────────────────────
 *.db
@@ -57,3 +57,9 @@ alembic/versions/*.py
 # ── Scripts temporales ────────────────────────────────────────────────────────
 backend/check_db.py
 backend/add_students.py
+ai_service/ia_live_test.py
+
+# ── Modelos ML binarios grandes (usar volumen Docker o Git LFS) ──────────────
+ai_service/models/saved/*.npy
+ai_service/models/saved/*.joblib
+ai_service/models/saved/*.h5

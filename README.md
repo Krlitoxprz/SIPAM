@@ -9,7 +9,7 @@ Facultad de Ingeniería · Universidad Surcolombiana · Trabajo de Grado
 | Capa | Tecnología |
 |------|-----------|
 | Backend API | FastAPI (Python 3.13) |
-| Base de Datos | SQLite vía SQLAlchemy ORM |
+| Base de Datos | PostgreSQL 15 (prod) / SQLite (dev) vía SQLAlchemy ORM |
 | Frontend | React 19 + TypeScript (Vite) |
 | Estilos | Tailwind CSS v4 |
 | Autenticación | JWT (python-jose) |

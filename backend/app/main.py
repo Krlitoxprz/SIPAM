@@ -8,6 +8,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
 from app.core.config import settings
 from app.api.v1.router import api_router
@@ -20,7 +21,27 @@ import app.models.password_reset  # noqa: F401
 import app.models.pago_viatico  # noqa: F401
 
 logger = logging.getLogger(__name__)
-scheduler = AsyncIOScheduler(timezone="America/Bogota")
+
+
+def _build_scheduler() -> AsyncIOScheduler:
+    """Crea el scheduler con SQLAlchemy JobStore cuando sea posible.
+
+    En producción multi-worker, el JobStore de PostgreSQL actúa como lock
+    distribuido: solo el primer worker que tome el job lo ejecuta, evitando
+    que se dispare N veces (una por worker).
+    """
+    try:
+        from app.db.database import engine
+        jobstores = {"default": SQLAlchemyJobStore(engine=engine)}
+        return AsyncIOScheduler(
+            jobstores=jobstores,
+            timezone="America/Bogota",
+        )
+    except Exception:
+        return AsyncIOScheduler(timezone="America/Bogota")
+
+
+scheduler = _build_scheduler()
 
 _DEFAULT_SECRET = "sipam-usco-super-secret-key-2024-change-in-production"
 
@@ -85,28 +106,33 @@ async def _enviar_recordatorios() -> None:
         ).all()
 
         for conv in convs_cierre:
-            # Solo notificar estudiantes que cumplen los requisitos mínimos
-            estudiantes = db.query(User).filter(
+            dias = (conv.fecha_fin_postulacion - ahora).days + 1
+
+            # Sub-query de estudiantes ya postulados — evita N+1 queries
+            ya_postulados_ids = (
+                db.query(Postulacion.estudiante_id)
+                .filter(Postulacion.convocatoria_id == conv.id)
+                .subquery()
+            )
+
+            # Una sola consulta: todos los elegibles que NO se han postulado
+            candidatos = db.query(User).filter(
                 User.rol == RolEnum.estudiante,
                 User.is_active == True,
                 User.promedio >= conv.promedio_minimo,
                 User.porcentaje_creditos >= (conv.creditos_minimo_pct or 0.0),
+                ~User.id.in_(ya_postulados_ids),
             ).all()
-            dias = (conv.fecha_fin_postulacion - ahora).days + 1
-            for est in estudiantes:
-                ya_postulado = db.query(Postulacion).filter(
-                    Postulacion.convocatoria_id == conv.id,
-                    Postulacion.estudiante_id == est.id,
-                ).first()
-                if not ya_postulado:
-                    db.add(Notificacion(
-                        usuario_id=est.id,
-                        titulo=f"⏰ Convocatoria cierra en {dias} día(s)",
-                        mensaje=f"La convocatoria «{conv.titulo}» cierra el "
-                                f"{conv.fecha_fin_postulacion.strftime('%d/%m/%Y')}. "
-                                f"¡No pierdas tu oportunidad de postularte!",
-                        tipo="convocatoria",
-                    ))
+
+            for est in candidatos:
+                db.add(Notificacion(
+                    usuario_id=est.id,
+                    titulo=f"⏰ Convocatoria cierra en {dias} día(s)",
+                    mensaje=f"La convocatoria «{conv.titulo}» cierra el "
+                            f"{conv.fecha_fin_postulacion.strftime('%d/%m/%Y')}. "
+                            f"¡No pierdas tu oportunidad de postularte!",
+                    tipo="convocatoria",
+                ))
         db.commit()
         logger.info("Recordatorios enviados para %d convocatorias próximas a cerrar", len(convs_cierre))
     except Exception as exc:
@@ -158,21 +184,35 @@ async def _actualizar_precios_sicom() -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Hard-fail si se intenta arrancar en producción con clave insegura
+    if settings.SECRET_KEY == _DEFAULT_SECRET and not settings.DEBUG:
+        raise ValueError(
+            "SECRET_KEY usa el valor por defecto inseguro. "
+            "Define SECRET_KEY en el archivo .env antes de desplegar en producción."
+        )
     if settings.SECRET_KEY == _DEFAULT_SECRET:
         logger.warning(
             "⚠  SECRET_KEY es el valor por defecto inseguro. "
             "Define SECRET_KEY en tu .env antes de usar en producción."
         )
+    # init_db: create_all (idempotente) + _run_cross_migrations (ALTER TABLE incremental)
+    # Es seguro en producción — nunca elimina tablas ni columnas existentes.
     init_db()
     _ensure_admin()
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
     await _seed_transporte()
     # Actualizar precios inmediatamente al arrancar y luego cada día a las 6:00 am
     await _actualizar_precios_sicom()
-    scheduler.add_job(_actualizar_precios_sicom, "cron", hour=6, minute=0,
-                      id="sicom_daily", replace_existing=True)
-    scheduler.add_job(_enviar_recordatorios, "cron", hour=8, minute=0,
-                      id="recordatorios_daily", replace_existing=True)
+    scheduler.add_job(
+        _actualizar_precios_sicom, "cron", hour=6, minute=0,
+        id="sicom_daily", replace_existing=True, max_instances=1,
+        misfire_grace_time=3600,
+    )
+    scheduler.add_job(
+        _enviar_recordatorios, "cron", hour=8, minute=0,
+        id="recordatorios_daily", replace_existing=True, max_instances=1,
+        misfire_grace_time=3600,
+    )
     scheduler.start()
     yield
     scheduler.shutdown(wait=False)
@@ -214,6 +254,14 @@ async def security_headers(request: Request, call_next):
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline'; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com; "
+        "img-src 'self' data: blob:; "
+        "connect-src 'self' http://localhost:5001;"
+    )
     if not settings.DEBUG:
         response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains"
     return response

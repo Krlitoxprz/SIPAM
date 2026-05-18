@@ -49,5 +49,11 @@ else
     echo "[entrypoint] Trained model found: $(cat $BEST_MODEL). Skipping training."
 fi
 
-echo "[entrypoint] Starting Flask AI service on port 5001..."
-exec python app.py
+echo "[entrypoint] Starting Flask AI service on port 5001 (gunicorn)..."
+exec gunicorn app:app \
+    --bind 0.0.0.0:5001 \
+    --workers 2 \
+    --timeout 120 \
+    --preload \
+    --access-logfile - \
+    --error-logfile -

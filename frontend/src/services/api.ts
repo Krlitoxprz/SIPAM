@@ -81,8 +81,8 @@ export const postulacionesService = {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
-  getDocumentoUrl: (archivoId: number) =>
-    `${api.defaults.baseURL}/postulaciones/documentos/${archivoId}/descargar`,
+  descargarDocumento: (archivoId: number) =>
+    api.get(`/postulaciones/documentos/${archivoId}/descargar`, { responseType: 'blob' }),
   setNotaAsignatura: (postId: number, nota: number) =>
     api.patch(`/postulaciones/${postId}/nota-asignatura`, null, { params: { nota } }),
   setEntrevista: (postId: number, nota_entrevista: number, observaciones?: string) =>

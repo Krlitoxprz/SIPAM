@@ -185,6 +185,8 @@ def explain(features: dict) -> dict:
     feature_names = meta["feature_names"]
 
     def predict_fn(X):
+        if model_name == "NeuralNetwork":
+            return model.predict(X, verbose=0).flatten()
         return model.predict_proba(X)[:, 1]
 
     explainer = shap.KernelExplainer(predict_fn, shap.kmeans(background, 20))

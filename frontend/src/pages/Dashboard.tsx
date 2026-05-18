@@ -572,7 +572,7 @@ export function Dashboard() {
             Incremento de presupuesto pendiente — {p.periodo_academico}:
             {' '}<span className="font-bold">{formatCOP(p.monto_total_asignado)}</span>
             {' '}→ <span className="font-bold text-amber-900">{formatCOP(p.monto_solicitado)}</span>
-            {user.rol === 'admin' ? ' · Revisa y aprueba en Presupuesto.' : ' · Esperando aprobación.'}
+            {' · Esperando aprobación.'}
           </span>
         </Link>
       )}

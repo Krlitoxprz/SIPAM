@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ClipboardList, FileText, Upload, CheckCircle, XCircle, Clock, AlertTriangle, Loader2, MessageSquare, LogOut, QrCode } from 'lucide-react';
+import { ClipboardList, FileText, Upload, CheckCircle, XCircle, Clock, AlertTriangle, Loader2, MessageSquare, LogOut, QrCode, Download } from 'lucide-react';
 import type { Postulacion, EstadoPostulacion } from '../types';
 import { postulacionesService, qrService, downloadBlob } from '../services/api';
 import { useAuthContext } from '../context/AuthContext';
@@ -23,14 +23,16 @@ const TIPOS_DOC = [
 
 function UploadDocumentoModal({
   postulacionId,
+  tipoInicial,
   onClose,
   onSuccess,
 }: {
   postulacionId: number;
+  tipoInicial: string;
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const [tipo, setTipo] = useState('cedula');
+  const [tipo, setTipo] = useState(tipoInicial);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -50,10 +52,13 @@ function UploadDocumentoModal({
     }
   }
 
+  const tipoLabel = TIPOS_DOC.find(t => t.value === tipo)?.label ?? tipo;
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">Subir Documento</h3>
+        <h3 className="text-lg font-bold text-gray-800 mb-1">Subir documento</h3>
+        <p className="text-sm text-gray-500 mb-4">{tipoLabel}</p>
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-4">
             {error}
@@ -72,15 +77,22 @@ function UploadDocumentoModal({
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">Archivo PDF</label>
-            <input
-              type="file"
-              accept=".pdf"
-              onChange={e => setFile(e.target.files?.[0] ?? null)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-usco-vinotinto"
-            />
-            <p className="text-xs text-gray-400 mt-1">
-              El archivo se guardará como: <code className="bg-gray-100 px-1 rounded">[Código]_{tipo}.pdf</code>
-            </p>
+            <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-xl px-4 py-6 cursor-pointer hover:border-usco-vinotinto hover:bg-red-50 transition-colors">
+              <Upload size={24} className="text-gray-400" />
+              <span className="text-sm text-gray-500">
+                {file ? file.name : 'Haz clic o arrastra un PDF aquí'}
+              </span>
+              {file && (
+                <span className="text-xs text-gray-400">{(file.size / 1024).toFixed(1)} KB</span>
+              )}
+              <input
+                type="file"
+                accept=".pdf"
+                className="hidden"
+                onChange={e => setFile(e.target.files?.[0] ?? null)}
+              />
+            </label>
+            <p className="text-xs text-gray-400 mt-1.5">Solo PDF · máx. 10 MB</p>
           </div>
         </div>
         <div className="flex gap-3 mt-6">
@@ -93,9 +105,9 @@ function UploadDocumentoModal({
           <button
             onClick={handleUpload}
             disabled={!file || loading}
-            className="flex-1 bg-usco-vinotinto hover:bg-usco-vinotinto-dark text-white font-semibold py-2.5 rounded-lg transition-colors disabled:opacity-60 text-sm flex items-center justify-center gap-2"
+            className="flex-1 bg-usco-vinotinto hover:bg-usco-vinotinto/90 text-white font-semibold py-2.5 rounded-lg transition-colors disabled:opacity-60 text-sm flex items-center justify-center gap-2"
           >
-            <Upload size={16} />
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
             {loading ? 'Subiendo...' : 'Subir PDF'}
           </button>
         </div>
@@ -110,7 +122,7 @@ export function Postulaciones() {
   const { user } = useAuthContext();
   const [postulaciones, setPostulaciones] = useState<Postulacion[]>([]);
   const [loading, setLoading] = useState(true);
-  const [uploadModal, setUploadModal] = useState<number | null>(null);
+  const [uploadModal, setUploadModal] = useState<{ postId: number; tipo: string } | null>(null);
   const [desistiendo, setDesistiendo] = useState<number | null>(null);
 
   async function cargar() {
@@ -153,7 +165,8 @@ export function Postulaciones() {
     <div className="space-y-6">
       {uploadModal !== null && (
         <UploadDocumentoModal
-          postulacionId={uploadModal}
+          postulacionId={uploadModal.postId}
+          tipoInicial={uploadModal.tipo}
           onClose={() => setUploadModal(null)}
           onSuccess={() => { setUploadModal(null); cargar(); }}
         />
@@ -177,8 +190,6 @@ export function Postulaciones() {
           {postulaciones.map(post => {
             const cfg = estadoConfig[post.estado];
             const archivos = post.archivos ?? [];
-            const tiposSubidos = archivos.map((a: { tipo_documento: string }) => a.tipo_documento);
-            const faltantes = TIPOS_DOC.filter(t => !tiposSubidos.includes(t.value));
             return (
               <div key={post.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <div className="flex items-start justify-between gap-4">
@@ -226,25 +237,69 @@ export function Postulaciones() {
                       {post.documentos_completos ? 'Completos' : `${archivos.length}/3 subidos`}
                     </span>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     {TIPOS_DOC.map(t => {
-                      const subido = tiposSubidos.includes(t.value);
+                      const archivo = archivos.find((a: { tipo_documento: string }) => a.tipo_documento === t.value);
+                      const subido = !!archivo;
+                      const puedeSubir = user?.rol === 'estudiante' && !['seleccionado','no_seleccionado','desistido'].includes(post.estado);
                       return (
-                        <div key={t.value} className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border ${subido ? 'border-emerald-300 bg-emerald-50 text-emerald-700' : 'border-gray-200 bg-gray-50 text-gray-500'}`}>
-                          {subido ? <CheckCircle size={12} /> : <Upload size={12} />}
-                          {t.label}
+                        <div
+                          key={t.value}
+                          className={`flex flex-col gap-1.5 rounded-xl border px-3 py-2.5 ${
+                            subido
+                              ? 'border-emerald-200 bg-emerald-50'
+                              : puedeSubir
+                              ? 'border-dashed border-gray-300 bg-gray-50 hover:border-usco-vinotinto hover:bg-red-50 cursor-pointer transition-colors'
+                              : 'border-gray-200 bg-gray-50'
+                          }`}
+                          onClick={() => {
+                            if (!subido && puedeSubir) setUploadModal({ postId: post.id, tipo: t.value });
+                          }}
+                          role={!subido && puedeSubir ? 'button' : undefined}
+                          tabIndex={!subido && puedeSubir ? 0 : undefined}
+                          onKeyDown={e => { if (!subido && puedeSubir && (e.key === 'Enter' || e.key === ' ')) setUploadModal({ postId: post.id, tipo: t.value }); }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className={`text-xs font-semibold ${
+                              subido ? 'text-emerald-700' : 'text-gray-500'
+                            }`}>{t.label}</span>
+                            {subido
+                              ? <CheckCircle size={14} className="text-emerald-500 shrink-0" />
+                              : puedeSubir
+                              ? <Upload size={14} className="text-gray-400 shrink-0" />
+                              : <XCircle size={14} className="text-gray-300 shrink-0" />}
+                          </div>
+                          {subido && archivo ? (
+                            <>
+                              <p className="text-[10px] text-gray-400 truncate">{archivo.nombre_original}</p>
+                              <button
+                                onClick={async e => {
+                                  e.stopPropagation();
+                                  try {
+                                    const r = await postulacionesService.descargarDocumento(archivo.id);
+                                    downloadBlob(r.data, archivo.nombre_original);
+                                  } catch { /* silencioso */ }
+                                }}
+                                className="flex items-center gap-1 text-[10px] font-semibold text-usco-vinotinto hover:underline text-left"
+                              >
+                                <Download size={10} /> Descargar
+                              </button>
+                              {puedeSubir && (
+                                <button
+                                  onClick={e => { e.stopPropagation(); setUploadModal({ postId: post.id, tipo: t.value }); }}
+                                  className="text-[10px] text-gray-400 hover:text-usco-vinotinto transition-colors text-left"
+                                >
+                                  Reemplazar
+                                </button>
+                              )}
+                            </>
+                          ) : (
+                            puedeSubir && <p className="text-[10px] text-gray-400">Clic para subir PDF</p>
+                          )}
                         </div>
                       );
                     })}
                   </div>
-                  {faltantes.length > 0 && user?.rol === 'estudiante' && !['seleccionado','no_seleccionado','desistido'].includes(post.estado) && (
-                    <button
-                      onClick={() => setUploadModal(post.id)}
-                      className="mt-3 flex items-center gap-2 text-sm font-semibold text-usco-vinotinto hover:text-usco-vinotinto/80 transition-colors"
-                    >
-                      <Upload size={15} /> Subir documento faltante
-                    </button>
-                  )}
                   {post.estado === 'seleccionado' && (
                     <button
                       onClick={async () => {

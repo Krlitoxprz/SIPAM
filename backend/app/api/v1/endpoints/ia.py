@@ -17,7 +17,8 @@ from app.models.user import User, RolEnum
 router = APIRouter()
 
 AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "http://localhost:5001")
-_TIMEOUT = 10.0
+_TIMEOUT = 10.0       # endpoints de métricas/explicaciones (no crítico para UX)
+_TIMEOUT_RECOM = 3.0  # recomendaciones (user-facing): falla rápido → fallback heurístico
 
 
 class PredictRequest(BaseModel):
@@ -166,7 +167,7 @@ async def _ai_probabilidad(
                 "num_postulantes": max(num_postulantes, 1),
                 "num_monitores_requeridos": max(num_requeridos, 1),
             },
-            timeout=4.0,
+            timeout=_TIMEOUT_RECOM,
         )
         if resp.status_code == 200:
             return resp.json().get("selected_probability")
@@ -248,7 +249,7 @@ async def recomendaciones(
         for c in elegibles
     }
 
-    async with httpx.AsyncClient(timeout=5.0) as client:
+    async with httpx.AsyncClient(timeout=_TIMEOUT_RECOM) as client:
         tasks = [
             _ai_probabilidad(
                 client, prom, pct,
