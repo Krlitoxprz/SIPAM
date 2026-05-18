@@ -128,10 +128,11 @@ def test_postular_sin_promedio_suficiente(client: TestClient, db, usuario_profes
     r = client.post(
         f"/api/v1/postulaciones/convocatoria/{conv.id}",
         headers=auth(token),
-        json={"carta_motivacion": "Prueba modo testing — promedio bajo omitido."},
+        json={"carta_motivacion": "Promedio insuficiente — debe ser bloqueado."},
     )
-    # En modo prueba el check de promedio se omite → postulación creada
-    assert r.status_code == 201
+    # Los requisitos académicos se aplican siempre, incluso en modo prueba
+    assert r.status_code == 422
+    assert "requisitos acad" in r.json()["detail"]["mensaje"].lower()
 
 
 # ── PM-006: Mis postulaciones ─────────────────────────────────────────────────

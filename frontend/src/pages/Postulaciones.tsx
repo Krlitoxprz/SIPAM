@@ -241,7 +241,9 @@ export function Postulaciones() {
                     {TIPOS_DOC.map(t => {
                       const archivo = archivos.find((a: { tipo_documento: string }) => a.tipo_documento === t.value);
                       const subido = !!archivo;
-                      const puedeSubir = user?.rol === 'estudiante' && !['seleccionado','no_seleccionado','desistido'].includes(post.estado);
+                      const puedeSubir = user?.rol === 'estudiante'
+                        && !['seleccionado','no_seleccionado','desistido'].includes(post.estado)
+                        && post.convocatoria?.estado !== 'finalizada';
                       return (
                         <div
                           key={t.value}

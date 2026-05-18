@@ -83,17 +83,18 @@ def postularse(
 
     promedio = current_user.promedio or 0.0
     pct_creditos = current_user.porcentaje_creditos or 0.0
-    if not modo_prueba:
-        motivos: list[str] = []
-        if promedio < conv.promedio_minimo:
-            motivos.append(f"Promedio {promedio:.2f} < mínimo requerido {conv.promedio_minimo:.2f}")
-        if pct_creditos < conv.creditos_minimo_pct:
-            motivos.append(f"Créditos aprobados {pct_creditos:.1f}% < mínimo requerido {conv.creditos_minimo_pct:.1f}%")
-        if motivos:
-            raise HTTPException(
-                status_code=422,
-                detail={"mensaje": "No cumple los requisitos académicos", "motivos": motivos},
-            )
+    # Los requisitos académicos se aplican SIEMPRE — el modo_prueba solo omite
+    # restricciones de fechas y estado de convocatoria, nunca los requisitos del estudiante.
+    motivos: list[str] = []
+    if promedio < conv.promedio_minimo:
+        motivos.append(f"Promedio {promedio:.2f} < mínimo requerido {conv.promedio_minimo:.2f}")
+    if pct_creditos < conv.creditos_minimo_pct:
+        motivos.append(f"Créditos aprobados {pct_creditos:.1f}% < mínimo requerido {conv.creditos_minimo_pct:.1f}%")
+    if motivos:
+        raise HTTPException(
+            status_code=422,
+            detail={"mensaje": "No cumple los requisitos académicos", "motivos": motivos},
+        )
 
     post = Postulacion(
         convocatoria_id=conv_id,
@@ -140,12 +141,24 @@ async def subir_documento(
             detail=f"Tipo de documento inválido. Permitidos: {list(TIPOS_DOCUMENTO_VALIDOS)}",
         )
 
-    post = db.query(Postulacion).filter(
-        Postulacion.id == post_id,
-        Postulacion.estudiante_id == current_user.id,
-    ).first()
+    post = (
+        db.query(Postulacion)
+        .options(joinedload(Postulacion.convocatoria))
+        .filter(
+            Postulacion.id == post_id,
+            Postulacion.estudiante_id == current_user.id,
+        )
+        .first()
+    )
     if not post:
         raise HTTPException(status_code=404, detail="Postulación no encontrada")
+
+    # No se puede subir documentos si la convocatoria ya fue finalizada
+    if post.convocatoria and post.convocatoria.estado == EstadoConvocatoriaEnum.finalizada:
+        raise HTTPException(
+            status_code=400,
+            detail="No se pueden subir documentos: la convocatoria ya fue finalizada.",
+        )
 
     nombre_original = file.filename or f"{tipo_doc}.pdf"
     safe_name, ruta_completa = await validate_and_save(
