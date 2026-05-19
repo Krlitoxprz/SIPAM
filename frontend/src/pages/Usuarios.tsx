@@ -489,13 +489,26 @@ export function Usuarios() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1">Programa</label>
-                  <input value={form.programa} onChange={(e) => setForm({ ...form, programa: e.target.value })}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-usco-vinotinto/30" />
+                  <select value={form.programa} onChange={(e) => setForm({ ...form, programa: e.target.value })}
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-usco-vinotinto/30 bg-white">
+                    <option value="">Seleccione...</option>
+                    <option value="Ingeniería Agroindustrial">Ingeniería Agroindustrial</option>
+                    <option value="Ingeniería Agrícola">Ingeniería Agrícola</option>
+                    <option value="Ingeniería Civil">Ingeniería Civil</option>
+                    <option value="Ingeniería de Petróleos">Ingeniería de Petróleos</option>
+                    <option value="Ingeniería de Software">Ingeniería de Software</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1">Sede</label>
-                  <input value={form.sede} onChange={(e) => setForm({ ...form, sede: e.target.value })}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-usco-vinotinto/30" />
+                  <select value={form.sede} onChange={(e) => setForm({ ...form, sede: e.target.value })}
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-usco-vinotinto/30 bg-white">
+                    <option value="">Seleccione...</option>
+                    <option value="Neiva">Neiva</option>
+                    <option value="La Plata">La Plata</option>
+                    <option value="Garzón">Garzón</option>
+                    <option value="Pitalito">Pitalito</option>
+                  </select>
                 </div>
               </div>
 
