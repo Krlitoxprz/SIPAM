@@ -71,6 +71,39 @@ def _to_out(p: Presupuesto) -> PresupuestoOut:
 
 # ── Rutas estáticas PRIMERO (antes de /{periodo}) para evitar route capture ──
 
+@router.get("/periodo-activo", summary="Devuelve el período académico activo")
+def get_periodo_activo(
+    db: Session = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    """
+    Retorna el período activo: primero busca en ConfiguracionCalendario (is_active=True),
+    luego el presupuesto aprobado más reciente, y como fallback genera el periodo actual.
+    """
+    cal = (
+        db.query(ConfiguracionCalendario)
+        .filter(ConfiguracionCalendario.is_active == True)  # noqa: E712
+        .order_by(ConfiguracionCalendario.periodo_academico.desc())
+        .first()
+    )
+    if cal:
+        return {"periodo_academico": cal.periodo_academico}
+
+    pres = (
+        db.query(Presupuesto)
+        .filter(Presupuesto.estado == EstadoPresupuestoEnum.aprobado)
+        .order_by(Presupuesto.periodo_academico.desc())
+        .first()
+    )
+    if pres:
+        return {"periodo_academico": pres.periodo_academico}
+
+    from datetime import date
+    hoy = date.today()
+    semestre = "1" if hoy.month <= 6 else "2"
+    return {"periodo_academico": f"{hoy.year}-{semestre}"}
+
+
 @router.get("/", response_model=list[PresupuestoOut])
 def listar_presupuestos(
     db: Session = Depends(get_db),
