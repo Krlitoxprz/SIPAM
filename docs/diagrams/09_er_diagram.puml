@@ -113,6 +113,28 @@ entity "audit_log" as AuditLog {
     * created_at : TIMESTAMP
 }
 
+entity "iot_tracking" as IoTTracking {
+    * id : INT <<PK>>
+    --
+    * device_id : VARCHAR(50)
+    * practice_id : VARCHAR(50)
+    latitude : DECIMAL(10,8)
+    longitude : DECIMAL(11,8)
+    altitude : DECIMAL(8,2)
+    speed_kmh : DECIMAL(6,2)
+    course : DECIMAL(5,2)
+    satellites : INT
+    hdop : DECIMAL(4,2)
+    datetime_gps : VARCHAR(50)
+    battery_voltage : DECIMAL(4,2)
+    wifi_rssi : INT
+    uptime_seconds : INT
+    error : VARCHAR(200)
+    * recorded_at : TIMESTAMP
+    -- FK
+    practica_id : INT <<FK>>
+}
+
 ' Relaciones
 Users ||--o{ Convocatorias : "profesor_id > crea"
 Users ||--o{ Convocatorias : "created_by > registra"
@@ -126,6 +148,8 @@ Asignaturas ||--o{ Practicas : "tiene >"
 Convocatorias ||--o{ Postulaciones : "recibe >"
 
 Postulaciones ||--o{ Archivos : "tiene >"
+
+Practicas ||--o{ IoTTracking : "practica_id > registra GPS >"
 
 ' Notas
 note right of Users

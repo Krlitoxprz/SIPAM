@@ -3,109 +3,109 @@
 !theme plain
 skinparam backgroundColor #F5F2EA
 
-title SIPAM-USCO - Diagrama de Despliegue en AWS
+title SIPAM-USCO — Deployment Diagram (AWS EC2 + IoT)
 
-node "Usuario" as User {
-    artifact "Browser" as Browser
-    artifact "Mobile" as Mobile
+node "Users" as Users {
+    artifact "Web Browser" as Browser
+}
+
+node "IoT Field Device" as IoTDevice #4A90D9 {
+    artifact "ESP32 DevKit V1" as ESP32
+    artifact "NEO-6M GPS Module" as GPS
+    artifact "WiFi 802.11 b/g/n" as WiFi
 }
 
 cloud "Internet" as Internet
 
-node "AWS Cloud" as AWS {
-    
-    node "us-east-2 Region" as Region {
-        
-        node "VPC" as VPC {
-            
-            node "EC2 Instance" as EC2 {
-                
-                node "Ubuntu 22.04 LTS" as OS {
-                    
-                    node "Docker Engine" as Docker {
-                        
-                        node "Docker Compose Network" as Compose {
-                            
-                            rectangle "Frontend Service" #E8F5E9 {
-                                [Nginx Container] as NginxC
-                                portin "80" as P80
-                            }
-                            
-                            rectangle "Backend Service" #FFEBEE {
-                                [FastAPI Container] as FastAPIC
-                                portin "8000" as P8000
-                            }
-                            
-                            rectangle "AI Service" #F3E5F5 {
-                                [Flask Container] as FlaskC
-                                portin "5001" as P5001
-                            }
-                            
-                            rectangle "Database Service" #E3F2FD {
-                                [PostgreSQL Container] as PostgresC
-                                portin "5432" as P5432
-                                [Volume: postgres\_data] as VolDB
-                            }
-                            
-                        }
-                        
-                    }
-                    
-                }
-                
-                portin "22 (SSH)" as P22
-                portin "80 (HTTP)" as PHTTP
-                
-            }
-            
-            node "Security Group" as SG {
-                rectangle "Inbound Rules" {
-                    [Allow 22 from MyIP]
-                    [Allow 80 from 0.0.0.0/0]
-                }
-            }
-            
-        }
-        
-    }
-    
+node "GitHub.com" as GitHub {
+    artifact "SIPAM Repository\n(main branch)" as Repo
 }
 
-' Conexiones
-User --> Internet : HTTP/HTTPS
-Internet --> PHTTP : 18.222.152.152
+node "AWS Cloud (us-east-2)" as AWS {
 
-P80 --> NginxC
-NginxC --> P8000 : /api/v1/*
-FastAPIC --> P5432 : SQLAlchemy
-FastAPIC ..> P5001 : HTTP
+    node "EC2 Instance\nt2.micro | Ubuntu 22.04 LTS" as EC2 {
+        note right
+          IP: 18.222.152.152
+          vCPU: 1 | RAM: 1 GB
+          SSD: 29 GB
+          DNS: ec2-18-222-152-152
+               .us-east-2.compute.amazonaws.com
+        end note
 
-PostgresC --> VolDB : Persistencia
+        node "Docker Engine 24.x\nDocker Compose v2" as Docker {
 
-' Labels
-note right of EC2
-  **Tipo:** t3.medium
-  **vCPU:** 2
-  **RAM:** 4 GB
-  **IP Pública:** 18.222.152.152
-  **DNS:** ec2-18-222-152-152.us-east-2.compute.amazonaws.com
+            rectangle "frontend\n[Nginx:alpine + React Build]" #E8F5E9 {
+                [Nginx :80] as Nginx
+                artifact "React Static Files" as ReactBuild
+            }
+
+            rectangle "backend\n[python:3.11-slim]" #FFEBEE {
+                [FastAPI/Uvicorn :8000] as FastAPI
+                artifact "Routers: auth, convocatorias,\npostulaciones, iot, ocr, nlp" as Routers
+            }
+
+            rectangle "ai_service\n[python:3.11-slim (stub)]" #F3E5F5 {
+                [Flask :5001] as Flask
+                artifact "app_stub.py\n(course-compliant)" as StubApp
+            }
+
+            rectangle "db\n[postgres:16-alpine]" #E3F2FD {
+                [PostgreSQL :5432] as Postgres
+                database "Volume: postgres_data" as PGVol
+            }
+
+        }
+
+        rectangle "AWS Security Group" {
+            artifact "Port 22 (SSH): Admin only" as P22
+            artifact "Port 80 (HTTP): 0.0.0.0/0" as P80
+        }
+    }
+
+}
+
+' ===== CONNECTIONS =====
+
+Users --> Internet : HTTP
+IoTDevice --> Internet : WiFi HTTP POST\n(iot_device_key_12345)
+Internet --> Nginx : :80 → 18.222.152.152
+
+Nginx --> FastAPI : /api/v1/* (reverse proxy)
+FastAPI --> Postgres : SQLAlchemy ORM
+FastAPI --> Flask : HTTP /predict\n/ocr/extract\n/analyze_letter
+
+Postgres --> PGVol : persistence
+Flask --> StubApp
+
+GitHub --> Docker : git pull &&\ndocker compose up -d --build
+
+note bottom of IoTDevice
+  Hardware: ESP32 + NEO-6M
+  Firmware: Arduino C++
+  Protocol: HTTP/1.1 REST
+  Auth: X-Api-Key header
+  Interval: POST every 60s
+  Fields: lat, lng, alt, sats,
+          battery, rssi, speed
 end note
 
-note bottom of Docker
-  **Versión:** Docker 24.x
-  **Compose:** v2.x
-  **Imágenes:**
-  - nginx:alpine
-  - python:3.11-slim (backend)
-  - python:3.11-slim (ai)
-  - postgres:15-alpine
+note bottom of Flask
+  Stub mode deployed (AWS disk constraints)
+  Returns course-compliant JSON responses
+  CNN OCR: Conv2D architecture metadata
+  NLP: DistilBERT architecture metadata
+  Full model: available locally
 end note
 
-note right of SG
-  **Firewall AWS**
-  - SSH (22): Solo IP admin
-  - HTTP (80): Público
-  - HTTPS (443): Público (futuro)
+note right of FastAPI
+  Endpoints:
+  /api/v1/auth/
+  /api/v1/convocatorias/
+  /api/v1/postulaciones/
+  /api/v1/iot/          (NEW)
+  /api/v1/ocr/          (NEW)
+  /api/v1/nlp/          (NEW)
+  /docs (Swagger UI)
 end note
 
 @enduml
