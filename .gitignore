@@ -63,3 +63,10 @@ ai_service/ia_live_test.py
 ai_service/models/saved/*.npy
 ai_service/models/saved/*.joblib
 ai_service/models/saved/*.h5
+ai_service/models/saved/*.keras
+
+# ── Claves SSH y certificados (¡NUNCA subir!) ────────────────────────────────
+*.pem
+*.key
+*.p12
+*.pfx
