@@ -1,0 +1,111 @@
+@startuml SIPAM_Deployment_Diagram
+
+!theme plain
+skinparam backgroundColor #F5F2EA
+
+title SIPAM-USCO - Diagrama de Despliegue en AWS
+
+node "Usuario" as User {
+    artifact "Browser" as Browser
+    artifact "Mobile" as Mobile
+}
+
+cloud "Internet" as Internet
+
+node "AWS Cloud" as AWS {
+    
+    node "us-east-2 Region" as Region {
+        
+        node "VPC" as VPC {
+            
+            node "EC2 Instance" as EC2 {
+                
+                node "Ubuntu 22.04 LTS" as OS {
+                    
+                    node "Docker Engine" as Docker {
+                        
+                        node "Docker Compose Network" as Compose {
+                            
+                            rectangle "Frontend Service" #E8F5E9 {
+                                [Nginx Container] as NginxC
+                                portin "80" as P80
+                            }
+                            
+                            rectangle "Backend Service" #FFEBEE {
+                                [FastAPI Container] as FastAPIC
+                                portin "8000" as P8000
+                            }
+                            
+                            rectangle "AI Service" #F3E5F5 {
+                                [Flask Container] as FlaskC
+                                portin "5001" as P5001
+                            }
+                            
+                            rectangle "Database Service" #E3F2FD {
+                                [PostgreSQL Container] as PostgresC
+                                portin "5432" as P5432
+                                [Volume: postgres\_data] as VolDB
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+                portin "22 (SSH)" as P22
+                portin "80 (HTTP)" as PHTTP
+                
+            }
+            
+            node "Security Group" as SG {
+                rectangle "Inbound Rules" {
+                    [Allow 22 from MyIP]
+                    [Allow 80 from 0.0.0.0/0]
+                }
+            }
+            
+        }
+        
+    }
+    
+}
+
+' Conexiones
+User --> Internet : HTTP/HTTPS
+Internet --> PHTTP : 18.222.152.152
+
+P80 --> NginxC
+NginxC --> P8000 : /api/v1/*
+FastAPIC --> P5432 : SQLAlchemy
+FastAPIC ..> P5001 : HTTP
+
+PostgresC --> VolDB : Persistencia
+
+' Labels
+note right of EC2
+  **Tipo:** t3.medium
+  **vCPU:** 2
+  **RAM:** 4 GB
+  **IP Pública:** 18.222.152.152
+  **DNS:** ec2-18-222-152-152.us-east-2.compute.amazonaws.com
+end note
+
+note bottom of Docker
+  **Versión:** Docker 24.x
+  **Compose:** v2.x
+  **Imágenes:**
+  - nginx:alpine
+  - python:3.11-slim (backend)
+  - python:3.11-slim (ai)
+  - postgres:15-alpine
+end note
+
+note right of SG
+  **Firewall AWS**
+  - SSH (22): Solo IP admin
+  - HTTP (80): Público
+  - HTTPS (443): Público (futuro)
+end note
+
+@enduml

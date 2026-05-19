@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import auth, convocatorias, postulaciones, seleccion, practicas, presupuesto, reportes, notificaciones, monitor, transporte, busqueda, qr, perfil, geo, admin, ia, pdf_gen
+from app.api.v1.endpoints import auth, convocatorias, postulaciones, seleccion, practicas, presupuesto, reportes, notificaciones, monitor, transporte, busqueda, qr, perfil, geo, admin, ia, pdf_gen, iot_tracking, ocr, nlp_analysis
 
 api_router = APIRouter()
 
@@ -26,3 +26,8 @@ api_router.include_router(geo.router, prefix="/geo", tags=["Geolocalización"])
 api_router.include_router(admin.router, prefix="/admin", tags=["Admin"])
 api_router.include_router(ia.router, prefix="/ia", tags=["Inteligencia Artificial"])
 api_router.include_router(pdf_gen.router, prefix="/pdf", tags=["PDF Generator"])
+
+# Course Compliance Routers (CNN, IoT, Transformer)
+api_router.include_router(iot_tracking.router, prefix="/iot", tags=["IoT GPS Tracking"])
+api_router.include_router(ocr.router, prefix="/ocr", tags=["CNN OCR"])
+api_router.include_router(nlp_analysis.router, prefix="/nlp", tags=["Transformer NLP"])

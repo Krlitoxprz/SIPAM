@@ -1,0 +1,131 @@
+@startuml SIPAM_Component_Diagram
+
+!theme plain
+skinparam backgroundColor #F5F2EA
+
+title SIPAM-USCO - Diagrama de Componentes
+
+package "Cliente" {
+    [Navegador Web] as Browser
+    [Mobile App] as Mobile #DDDDDD
+}
+
+package "Servidor AWS EC2" {
+    
+    package "Docker Compose" {
+        
+        package "Frontend Container" #E8F5E9 {
+            [Nginx] as NginxFE
+            [React App] as React
+            [Static Files] as Static
+        }
+        
+        package "Backend Container" #FFEBEE {
+            [FastAPI] as FastAPI
+            [SQLAlchemy ORM] as ORM
+            
+            package "Routers" {
+                [auth.py] as AuthRouter
+                [convocatorias.py] as ConvRouter
+                [postulaciones.py] as PostRouter
+                [seleccion.py] as SelRouter
+                [pdf\_gen.py] as PDFRouter
+            }
+        }
+        
+        package "AI Service Container" #F3E5F5 {
+            [Flask API] as FlaskAPI
+            [Predict Module] as Predict
+            [Train Module] as Train #DDDDDD
+            
+            package "ML Models" {
+                [Random Forest] as RF
+                [XGBoost] as XGB
+                [Logistic Regression] as LR
+                [Meta Classifier] as Meta
+            }
+        }
+        
+        package "Database Container" #E3F2FD {
+            [PostgreSQL] as Postgres
+            [Data Volume] as VolDB
+        }
+        
+    }
+    
+}
+
+package "Servicios Externos" {
+    [AWS S3] as S3 #DDDDDD
+    [SendGrid/SES] as Email
+    [GitHub] as GitHub
+}
+
+' Conexiones Cliente -> Frontend
+Browser --> NginxFE : HTTP/80
+Mobile ..> NginxFE : HTTP/80
+
+' Frontend interno
+NginxFE --> React
+React --> Static
+
+' Frontend -> Backend
+NginxFE --> FastAPI : /api/v1/*
+
+' Backend interno
+FastAPI --> ORM
+FastAPI --> AuthRouter
+FastAPI --> ConvRouter
+FastAPI --> PostRouter
+FastAPI --> SelRouter
+FastAPI --> PDFRouter
+
+' Backend -> DB
+ORM --> Postgres
+
+' Backend -> AI
+FastAPI --> FlaskAPI : :5001/predict
+
+' AI interno
+FlaskAPI --> Predict
+Predict --> RF
+Predict --> XGB
+Predict --> LR
+Predict --> Meta
+Train ..> RF : Entrena
+Train ..> XGB : Entrena
+
+' Database
+Postgres --> VolDB
+
+' Backend -> Externo
+FastAPI ..> Email : SMTP
+PDFRouter ..> S3 : Upload PDFs
+
+' Despliegue
+GitHub ..> NginxFE : Git Pull
+
+note right of Browser
+  Accede desde:
+  http://18.222.152.152
+end note
+
+note bottom of FastAPI
+  Puerto 8000
+  Python 3.11
+  Uvicorn workers: 1
+end note
+
+note bottom of FlaskAPI
+  Puerto 5001
+  Modelos ML
+  Serializados con joblib
+end note
+
+note right of Postgres
+  PostgreSQL 15
+  Port 5432
+  Persistent Volume
+end note
+
+@enduml

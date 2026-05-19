@@ -276,6 +276,13 @@ def registrar_nota_asignatura(
         raise HTTPException(status_code=404, detail="Postulación no encontrada")
     if post.convocatoria.profesor_id != current_user.id:
         raise HTTPException(status_code=403, detail="No tiene permisos sobre esta postulación")
+    
+    # Validar estado de la convocatoria
+    if post.convocatoria.estado not in [EstadoConvocatoriaEnum.cerrada, EstadoConvocatoriaEnum.en_evaluacion]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"No se puede evaluar: la convocatoria está en estado '{post.convocatoria.estado.value}'. Solo se permite evaluar en estados 'cerrada' o 'en_evaluacion'."
+        )
 
     post.nota_asignatura = round(nota, 2)
     db.commit()
@@ -303,6 +310,13 @@ def registrar_entrevista(
         raise HTTPException(status_code=404, detail="Postulación no encontrada")
     if post.convocatoria.profesor_id != current_user.id:
         raise HTTPException(status_code=403, detail="No tiene permisos sobre esta postulación")
+    
+    # Validar estado de la convocatoria
+    if post.convocatoria.estado not in [EstadoConvocatoriaEnum.cerrada, EstadoConvocatoriaEnum.en_evaluacion]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"No se puede evaluar: la convocatoria está en estado '{post.convocatoria.estado.value}'. Solo se permite evaluar en estados 'cerrada' o 'en_evaluacion'."
+        )
 
     post.nota_entrevista = round(body.nota_entrevista, 2)
     post.observaciones_evaluador = body.observaciones

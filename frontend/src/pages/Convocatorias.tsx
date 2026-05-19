@@ -606,14 +606,17 @@ function ModalDetalle({
                 className="flex items-center gap-2 text-xs font-semibold text-usco-gris border border-gray-200 hover:text-usco-vinotinto hover:border-usco-vinotinto/30 px-3 py-2 rounded-lg transition-colors">
                 <FileText size={13} /> FO-46 Cartel Convocatoria
               </button>
-              {convocatoria.estado === 'finalizada' && (
+              {(convocatoria.estado === 'en_evaluacion' || convocatoria.estado === 'finalizada') && (
                 <button
                   onClick={async () => {
                     try {
                       const r = await pdfService.fo14(convocatoria.id);
                       downloadBlob(new Blob([r.data], { type: 'application/pdf' }),
                         `FO-14_Monitor_${convocatoria.id}.pdf`);
-                    } catch { /* silencioso */ }
+                    } catch (err) {
+                      console.error('Error descargando FO-14:', err);
+                      alert('Error al generar el documento FO-14. Verifique que haya un monitor seleccionado.');
+                    }
                   }}
                   className="flex items-center gap-2 text-xs font-semibold text-usco-vinotinto border border-usco-vinotinto/30 hover:bg-usco-vinotinto/5 px-3 py-2 rounded-lg transition-colors">
                   <FileText size={13} /> FO-14 Requerimiento Monitores

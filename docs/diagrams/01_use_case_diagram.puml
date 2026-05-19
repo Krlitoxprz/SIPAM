@@ -1,0 +1,117 @@
+@startuml SIPAM_Use_Case_Diagram
+
+!define RECTANGLE class
+
+skinparam backgroundColor #F5F2EA
+skinparam componentStyle rectangle
+
+title SIPAM-USCO - Diagrama de Casos de Uso
+
+left to right direction
+
+' Actores
+actor "Admin" as Admin #8D191D
+actor "Decano" as Decano #8D191D  
+actor "Jefe de\nPrograma" as Jefe #8D191D
+actor "Profesor" as Profesor #8D191D
+actor "Estudiante" as Estudiante #8D191D
+actor "Sistema\nExterno" as Sistema #666666
+
+' Sistema rectangle
+rectangle "SIPAM-USCO System" {
+    
+    ' Gestión de Usuarios
+    package "Gestión de Usuarios" #E8E8E8 {
+        usecase (Gestionar Usuarios) as UC01 #C8B567
+        usecase (Crear Usuario) as UC02
+        usecase (Editar Usuario) as UC03
+        usecase (Listar Usuarios) as UC04
+        usecase (Sancionar Usuario) as UC05
+    }
+    
+    ' Módulo Monitorías
+    package "Módulo Monitorías" #E8E8E8 {
+        usecase (Crear Convocatoria) as UC10 #C8B567
+        usecase (Publicar Convocatoria) as UC11
+        usecase (Postularse a Monitoría) as UC12 #C8B567
+        usecase (Evaluar Postulantes) as UC13
+        usecase (Ejecutar Selección) as UC14 #C8B567
+        usecase (Generar FO-14) as UC15
+        usecase (Cambiar Estado\nConvocatoria) as UC16
+    }
+    
+    ' Documentos
+    package "Gestión Documental" #E8E8E8 {
+        usecase (Subir Documentos) as UC20
+        usecase (Generar FO-46) as UC21
+        usecase (Generar QR) as UC22
+        usecase (Descargar PDFs) as UC23
+    }
+    
+    ' IA
+    package "Inteligencia Artificial" #E8E8E8 {
+        usecase (Predecir Probabilidad\nSelección) as UC30 #C8B567
+        usecase (Entrenar Modelo) as UC31
+    }
+    
+    ' Prácticas (futuro)
+    package "Prácticas Extramuros" #E8E8E8 {
+        usecase (Crear Práctica) as UC40 #DDDDDD
+        usecase (Aprobar Práctica) as UC41 #DDDDDD
+        usecase (Tracking GPS) as UC42 #DDDDDD
+    }
+}
+
+' Relaciones Admin
+Admin --> UC01
+Admin --> UC02
+Admin --> UC03
+Admin --> UC04
+Admin --> UC05
+Admin --> UC11
+Admin --> UC16
+
+' Relaciones Decano
+Decano --> UC04
+Decano --> UC41
+
+' Relaciones Jefe
+Jefe --> UC10
+Jefe --> UC14
+Jefe --> UC16
+Jefe --> UC04
+
+' Relaciones Profesor
+Profesor --> UC13
+Profesor --> UC15
+Profesor --> UC21
+Profesor --> UC40
+
+' Relaciones Estudiante
+Estudiante --> UC12
+Estudiante --> UC20
+Estudiante --> UC23
+Estudiante --> UC30
+
+' Include/Extend relationships
+UC01 ..> UC02 : <<include>>
+UC01 ..> UC03 : <<include>>
+UC01 ..> UC04 : <<include>>
+
+UC10 ..> UC11 : <<extend>>
+UC14 ..> UC15 : <<include>>
+
+UC30 ..> UC31 : <<extend>>
+
+' Notas
+note right of UC30
+  RF-IA-01: Predicción de
+  selección usando ML
+end note
+
+note bottom of UC14
+  RF-MON-05: Algoritmo
+  de selección Acuerdo 012/2023
+end note
+
+@enduml
