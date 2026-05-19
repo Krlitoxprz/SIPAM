@@ -1,6 +1,15 @@
+import os
 from pydantic_settings import BaseSettings
 from pydantic import ConfigDict
 from typing import List
+
+
+def parse_cors_origins() -> List[str]:
+    """Parse CORS_ORIGINS from env var (comma-separated) or return defaults."""
+    cors_env = os.getenv("CORS_ORIGINS", "")
+    if cors_env:
+        return [origin.strip() for origin in cors_env.split(",") if origin.strip()]
+    return ["http://localhost:5173", "http://127.0.0.1:5173"]
 
 
 class Settings(BaseSettings):
@@ -18,7 +27,8 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = "uploads"
     MAX_FILE_SIZE_MB: int = 10
 
-    CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    # CORS origins - se sobreescribe en producción via CORS_ORIGINS env var
+    CORS_ORIGINS: List[str] = parse_cors_origins()
 
     ADMIN_PASSWORD: str = "Sasuke24"  # Contraseña del superusuario admin — cambiar en .env
     ORS_API_KEY: str = ""  # OpenRouteService — gratuito en openrouteservice.org
