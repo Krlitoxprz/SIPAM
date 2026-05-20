@@ -1,4 +1,4 @@
-% ============================================================
+﻿% ============================================================
 %  SIPAM-USCO — Comprehensive Technical Documentation (ENGLISH)
 %  Universidad Surcolombiana | Course: Artificial Intelligence
 %  Author: Carlos Ivan Perez Vera
@@ -99,253 +99,375 @@
 %% ── TITLE PAGE ───────────────────────────────────────────
 \begin{titlepage}
 \centering\vspace*{0.8cm}
-{\LARGE\bfseries\textcolor{uscoRed}{Universidad Surcolombiana}}\\[0.3cm]
-{\large Faculty of Engineering — Software Engineering Program}\\[1.8cm]
-\textcolor{uscoRed}{\rule{\textwidth}{2.5pt}}\\[0.7cm]
-{\fontsize{28}{32}\selectfont\bfseries SIPAM-USCO}\\[0.4cm]
-{\Large\itshape Integrated System for Practices and Monitoring Advisories}\\[0.5cm]
-{\LARGE\bfseries Comprehensive Technical Documentation:\\Requirements, Architecture \& AI}\\[0.7cm]
-\textcolor{uscoRed}{\rule{\textwidth}{2.5pt}}\\[2cm]
-\begin{tabular}{rl}
-  \textbf{Course:}      & Artificial Intelligence \\[0.4cm]
-  \textbf{Lecturer:}    & Juan Antonio Castro Silva \\[0.4cm]
-  \textbf{Author:}      & Carlos Ivan Perez Vera \\[0.4cm]
-  \textbf{Repository:}  & \url{https://github.com/Krlitoxprz/SIPAM} \\[0.4cm]
-  \textbf{Public URL:}  & \url{http://18.222.152.152} \\
+{\LARGE\bfseries\textcolor{uscoRed}{Universidad Surcolombiana}}\\[0.2cm]
+{\large Faculty of Engineering — Software Engineering Program}\\[1.4cm]
+\textcolor{uscoRed}{\rule{\textwidth}{2.5pt}}\\[0.6cm]
+{\fontsize{26}{30}\selectfont\bfseries\textcolor{uscoRed}{SIPAM-USCO}}\\[0.3cm]
+{\large\itshape Integrated System for Practices and Monitoring Advisories}\\[0.4cm]
+{\LARGE\bfseries Comprehensive Technical Documentation\\Requirements and AI Architecture}\\[0.6cm]
+\textcolor{uscoRed}{\rule{\textwidth}{2.5pt}}\\[1.5cm]
+\begin{tabular}{@{}rl@{}}
+  \textbf{Course:}     & Artificial Intelligence \\[0.35cm]
+  \textbf{Lecturer:}   & Juan Antonio Castro Silva \\[0.35cm]
+  \textbf{Author:}     & Carlos Ivan Perez Vera \\[0.35cm]
+  \textbf{Repository:} & \url{https://github.com/Krlitoxprz/SIPAM} \\[0.35cm]
+  \textbf{Public URL:} & \url{http://18.222.152.152} \\[0.35cm]
+  \textbf{Date:}       & \today \\
 \end{tabular}
 \vfill
-{\large Neiva, Huila, Colombia \quad — \quad \today}
+{\large Neiva, Huila, Colombia}
 \end{titlepage}
 
-%% ── EXECUTIVE SUMMARY ────────────────────────────────────
-\chapter*{Executive Summary}
-\addcontentsline{toc}{chapter}{Executive Summary}
-
-SIPAM-USCO (\textit{Sistema Integrado de Prácticas y Asesorías de Monitorías}) is an open-source
-intelligent web platform that digitizes and automates the management of academic monitoring programs
-and field practice excursions at Universidad Surcolombiana, in strict compliance with Acuerdo 012/2023.
-
-\begin{center}
-\begin{tabularx}{\textwidth}{|>{\bfseries}l|X|c|}
-\hline
-\rowcolor{tableHdr}\textcolor{white}{\textbf{Module}} &
-\textcolor{white}{\textbf{Technology}} &
-\textcolor{white}{\textbf{Key KPI}} \\
-\hline
-\rowcolor{rowOdd}Predictive ML  & Random Forest + MLP + Decision Tree & F1 = 0.89 \\
-\hline\rowcolor{rowEven}CNN OCR        & TensorFlow/Keras Conv2D×4 (37 classes) & Accuracy 94.2\% \\
-\hline\rowcolor{rowOdd}Transformer NLP & DistilBERT-base-uncased (66 M params) & Inference 2.8 s \\
-\hline\rowcolor{rowEven}IoT GPS        & ESP32 DevKit V1 + NEO-6M, HTTP REST & 60 s/point \\
-\hline\rowcolor{rowOdd}Cloud          & AWS EC2 t2.micro + Docker Compose & 99\% uptime \\
-\hline
-\end{tabularx}
-\end{center}
-
-\begin{center}
-\begin{tabular}{lclc}
-\toprule
-\textbf{Metric} & \textbf{Value} & \textbf{Metric} & \textbf{Value} \\
-\midrule
-API Endpoints     & 28     & Automated Tests & 45 (100\% pass) \\
-Code Coverage     & 88\%   & API Response p95 & 320 ms \\
-CNN OCR Accuracy  & 94.2\% & Random Forest F1 & 0.89 \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-%% ── TABLE OF CONTENTS ────────────────────────────────────
+%% ── INDICES ──────────────────────────────────────────────
 \tableofcontents\newpage
 \listoffigures\newpage
 \listoftables\newpage
 
 % ════════════════════════════════════════════════════════════
-\chapter{Introduction and Justification}
+\chapter{Introduction}
 % ════════════════════════════════════════════════════════════
 
-\section{Institutional Background}
+The Universidad Surcolombiana (USCO) manages academic monitoring programs and field practice
+excursions for its Faculty of Engineering under \textbf{Acuerdo 012/2023} of the Superior Council.
+\textbf{SIPAM-USCO} (\textit{Sistema Integrado de Prácticas y Asesorías de Monitorías}) is the
+intelligent web platform that digitizes and automates these processes through four converging technologies:
 
-The Universidad Surcolombiana (USCO), located in Neiva, Colombia, manages academic monitoring
-programs (\textit{monitorías}) and field practice excursions (\textit{prácticas extramuros}) under
-\textbf{Acuerdo 012/2023}. All current processes rely on paper forms (FO-14, FO-46), manual
-spreadsheets, and in-person evaluations — creating significant inefficiencies.
-
-\section{Problem Statement}
-
-\begin{enumerate}[label=\textbf{P\arabic*.},leftmargin=*]
-\item \textbf{Manual Selection}: Scoring formula from Acuerdo 012/2023 is computed in spreadsheets, prone to errors and manipulation.
-\item \textbf{No GPS Traceability}: Field excursions have no real-time location tracking.
-\item \textbf{Manual Document Verification}: No automated OCR-based extraction from identity documents.
-\item \textbf{Subjective Letter Evaluation}: Motivation letters assessed subjectively without semantic analysis.
-\item \textbf{No Predictive Analytics}: No AI-based tools to predict student selection probability.
-\item \textbf{Fragmented Workflows}: Form generation, QR attendance, and excursion management are disconnected.
-\end{enumerate}
-
-\section{Objectives}
-
-\subsection{General Objective}
-Design, develop, and deploy SIPAM-USCO: an intelligent web platform that automates the management
-of monitoring programs and field practices at USCO, integrating ML, CNN, NLP, and IoT GPS.
-
-\subsection{Specific Objectives}
-\begin{enumerate}[label=\textbf{SO\arabic*.},leftmargin=*]
-\item Implement a transactional backend with RBAC using FastAPI and JWT (6 roles).
-\item Build an AI microservice (Flask) with 3+ ML models for selection prediction.
-\item Integrate CNN OCR (TensorFlow/Keras) for identity document text extraction.
-\item Implement Transformer NLP (DistilBERT) for motivation letter semantic analysis.
-\item Design IoT ecosystem (ESP32 + NEO-6M) for real-time GPS tracking of field practices.
-\item Deploy on AWS EC2 with Docker Compose and CI/CD via GitHub.
-\item Validate with unit, functional and integration tests with $\geq 85\%$ coverage.
-\end{enumerate}
+\begin{center}
+\begin{tabularx}{\textwidth}{|>{\bfseries\columncolor{rowGray}}p{3cm}|X|c|}
+\hline
+\rowcolor{tableHdr}
+\textcolor{white}{\textbf{Module}} &
+\textcolor{white}{\textbf{Technology}} &
+\textcolor{white}{\textbf{KPI}} \\
+\hline
+Machine Learning & Random Forest + MLP + Decision Tree (Scikit-learn) & F1 = 0.89 \\
+\hline
+CNN OCR & TensorFlow/Keras Conv2D×4, 37 alphanumeric classes & Accuracy 94.2\% \\
+\hline
+Transformer NLP & DistilBERT-base-uncased, 6 layers, 66 M parameters & Inference 2.8 s \\
+\hline
+IoT GPS & ESP32 DevKit V1 + u-blox NEO-6M, HTTP REST & Every 60 s \\
+\hline
+Backend / Cloud & FastAPI + PostgreSQL 16 + Docker + AWS EC2 & p95 320 ms \\
+\hline
+\end{tabularx}
+\end{center}
 
 % ════════════════════════════════════════════════════════════
-\chapter{State of the Art and Theoretical Foundation}
+\chapter{Problem Statement}
+% ════════════════════════════════════════════════════════════
+
+\section{Situational Analysis}
+
+All monitoring and practice management relies entirely on analogue methodologies: physical forms
+(FO-14, FO-46), spreadsheets, and in-person evaluations. Analysis of the current process at the
+Faculty of Engineering identified six critical problems:
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|>{\bfseries\columncolor{rowGray}}p{0.8cm}|p{3.8cm}|X|p{2.5cm}|}
+\hline
+\rowcolor{tableHdr}
+\textcolor{white}{\textbf{ID}} &
+\textcolor{white}{\textbf{Problem}} &
+\textcolor{white}{\textbf{Description}} &
+\textcolor{white}{\textbf{Impact}} \\
+\hline
+P1 & Manual selection & Acuerdo 012/2023 formula computed in spreadsheets, error-prone and open to manipulation & Unfair selection \\
+\hline
+P2 & No GPS traceability & Field excursions lack real-time location tracking & Student safety risk \\
+\hline
+P3 & Manual document verification & No OCR: ID cards and RUT verified by hand & Multi-day delays \\
+\hline
+P4 & Subjective letter evaluation & Motivation letters graded asymmetrically without semantic analysis & Evaluation bias \\
+\hline
+P5 & No predictive analytics & No mathematical models to predict monitor performance & Unsupported decisions \\
+\hline
+P6 & Fragmented workflows & Forms, QR attendance, and excursions are disconnected & Information loss \\
+\hline
+\end{tabularx}
+\end{center}
+
+\section{Root Cause}
+\textbf{Root cause}: Total dependence on manual processes and absence of integral digital systems
+for monitoring and field practice management at USCO.
+
+\textbf{Main effects}: Loss of transparency, inability to audit, safety risk during excursions,
+and asymmetry in academic evaluation.
+
+% ════════════════════════════════════════════════════════════
+\chapter{Objectives}
+% ════════════════════════════════════════════════════════════
+
+\section{General Objective}
+
+Design, develop, and deploy \textbf{SIPAM-USCO}, an intelligent web platform that automates the
+management of monitoring programs and field practices at USCO, combining modern web architectures
+with Artificial Intelligence ecosystems (ML, CNN, NLP) and IoT GPS telemetry, in strict compliance
+with Acuerdo 012/2023.
+
+\section{Specific Objectives}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|>{\bfseries\columncolor{rowGray}}p{1cm}|X|p{3cm}|}
+\hline
+\rowcolor{tableHdr}
+\textcolor{white}{\textbf{ID}} &
+\textcolor{white}{\textbf{Objective}} &
+\textcolor{white}{\textbf{Module}} \\
+\hline
+SO1 & Implement a transactional backend with RBAC (6 roles) using FastAPI and JWT & Backend / Auth \\
+\hline
+SO2 & Build an AI microservice (Flask) with $\geq 3$ ML models for selection prediction & AI — ML \\
+\hline
+SO3 & Integrate CNN OCR (TensorFlow/Keras) for text extraction from identity documents & AI — CNN \\
+\hline
+SO4 & Implement Transformer NLP (DistilBERT) for semantic analysis of motivation letters & AI — NLP \\
+\hline
+SO5 & Design an IoT ecosystem (ESP32 + NEO-6M) for real-time GPS tracking during practices & IoT GPS \\
+\hline
+SO6 & Deploy on AWS EC2 with Docker Compose and continuous integration via GitHub & Cloud / DevOps \\
+\hline
+SO7 & Validate through unit, functional, and integration tests with coverage $\geq 85\%$ & QA / Testing \\
+\hline
+\end{tabularx}
+\end{center}
+
+% ════════════════════════════════════════════════════════════
+\chapter{State of the Art, Theoretical Foundation and Related Work}
 % ════════════════════════════════════════════════════════════
 
 \section{Legal Framework — Acuerdo 012/2023}
 
-The Acuerdo 012/2023 from USCO's Superior Council requires: GPA $\geq 3.5$, at least 40\% of
-approved credits, and the following official weighted scoring formula:
-
+Acuerdo 012/2023 requires: GPA $\geq 3.5$, approved credits $\geq 40\%$, and the official formula:
 \begin{equation}
-Score = 0.4 \times \bar{x}_{acad} + 0.3 \times \%_{cred} + 0.2 \times grade_{subj} + 0.1 \times grade_{interv}
+\boxed{Score = 0.4\,\bar{x}_{acad} + 0.3\,\%_{cred} + 0.2\,grade_{subj} + 0.1\,grade_{interv}}
 \end{equation}
 
-\section{Technology Comparison}
+\section{Related Work — Academic Management Systems}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|l|l|X|p{3cm}|}
+\hline
+\rowcolor{tableHdr}
+\textcolor{white}{\textbf{System}} &
+\textcolor{white}{\textbf{Origin}} &
+\textcolor{white}{\textbf{Features}} &
+\textcolor{white}{\textbf{Limitation}} \\
+\hline
+\rowcolor{rowOdd}Moodle (2002) & Global & Open LMS: courses, forums, assessments & No monitoring module or AI \\
+\hline
+\rowcolor{rowEven}Banner ERP & Ellucian & Academic ERP: enrolment and grades & Not compliant with Acuerdo 012/2023 \\
+\hline
+\rowcolor{rowOdd}SIGAA & Brazil & Basic monitoring module & No OCR, NLP or IoT \\
+\hline
+\rowcolor{rowEven}\textbf{SIPAM-USCO} & \textbf{This work} & \textbf{Acuerdo 012/2023 + ML + CNN + NLP + IoT GPS} & \textbf{First of its kind in Colombia} \\
+\hline
+\end{tabularx}
+\end{center}
+
+\section{Technical Foundation}
 
 \begin{center}
 \begin{tabularx}{\textwidth}{|l|l|X|c|}
 \hline
-\rowcolor{tableHdr}\textcolor{white}{\textbf{Area}} &
+\rowcolor{tableHdr}
+\textcolor{white}{\textbf{Area}} &
 \textcolor{white}{\textbf{Reference}} &
 \textcolor{white}{\textbf{Contribution}} &
 \textcolor{white}{\textbf{Metric}} \\
 \hline
-\rowcolor{rowOdd}\multirow{3}{*}{ML in Education} & Romero \& Ventura (2020) & ML in education; neural networks for performance prediction & AUC 0.92 \\
-\cline{2-4}\rowcolor{rowEven} & Jiang et al.\ (2021) & Random Forest outperforms LR in dropout prediction & F1 0.87 \\
-\cline{2-4}\rowcolor{rowOdd} & \textbf{This work} & MLP+DT+RF+SMOTE+Optuna+SHAP ensemble & \textbf{F1 0.89} \\
+\rowcolor{rowOdd}\multirow{2}{*}{ML in Ed.} & Romero \& Ventura (2020) & ML in education; NN for performance prediction & AUC 0.92 \\
+\cline{2-4}\rowcolor{rowEven} & \textbf{This work} & MLP+DT+RF ensemble, SMOTE, Optuna, SHAP & \textbf{F1 0.89} \\
 \hline
-\rowcolor{rowEven}\multirow{3}{*}{CNN OCR} & LeCun et al.\ (1998) & LeNet-5, pioneer CNN for digit recognition & 99.2\% MNIST \\
-\cline{2-4}\rowcolor{rowOdd} & Shi et al.\ (2016) & CRNN (CNN+LSTM) for scene text recognition & 96.2\% IIIT-5K \\
-\cline{2-4}\rowcolor{rowEven} & \textbf{This work} & Custom CNN Conv2D×4 + BatchNorm (37 classes) & \textbf{94.2\%} \\
+\rowcolor{rowOdd}\multirow{2}{*}{CNN OCR} & LeCun (1998); Shi (2016) & LeNet-5 and CRNN as foundations & 96--99\% \\
+\cline{2-4}\rowcolor{rowEven} & \textbf{This work} & CNN Conv2D×4 + BatchNorm + Dropout, 37 classes & \textbf{94.2\%} \\
 \hline
-\rowcolor{rowOdd}\multirow{3}{*}{Transformer} & Vaswani et al.\ (2017) & Transformer with multi-head self-attention & — \\
-\cline{2-4}\rowcolor{rowEven} & Devlin et al.\ (2018) & BERT pre-trained on 3.3B words; SoTA on 11 NLP tasks & 110 M \\
-\cline{2-4}\rowcolor{rowOdd} & \textbf{This work} & DistilBERT for quality + sentiment analysis & \textbf{66 M} \\
+\rowcolor{rowOdd}\multirow{2}{*}{Transformer} & Vaswani (2017); Sanh (2019) & Transformer + DistilBERT ($-40\%$ params) & 66 M \\
+\cline{2-4}\rowcolor{rowEven} & \textbf{This work} & DistilBERT for letter quality and sentiment & \textbf{2.8 s} \\
 \hline
-\rowcolor{rowEven}\multirow{2}{*}{IoT GPS} & Xu et al.\ (2014) & GPS on campus: $-35\%$ coordination time & — \\
-\cline{2-4}\rowcolor{rowOdd} & \textbf{This work} & ESP32 + NEO-6M + HTTP REST + API Key auth & 60 s/pt \\
+\rowcolor{rowOdd}\multirow{2}{*}{IoT GPS} & Xu et al.\ (2014) & Campus GPS: $-35\%$ coordination time & — \\
+\cline{2-4}\rowcolor{rowEven} & \textbf{This work} & ESP32+NEO-6M+HTTP REST, API Key, GeoJSON & \textbf{60 s/pt} \\
 \hline
 \end{tabularx}
 \end{center}
 
-\section{Self-Attention Mechanism}
+Self-attention mechanism (Transformer):
 \begin{equation}
-\text{Attention}(Q,K,V)=\text{softmax}\!\left(\tfrac{QK^T}{\sqrt{d_k}}\right)V,\quad
+\text{Attention}(Q,K,V)=\text{softmax}\!\left(\dfrac{QK^T}{\sqrt{d_k}}\right)V, \quad
 \text{MultiHead}=\text{Concat}(\text{head}_1,\ldots,\text{head}_h)\,W^O
 \end{equation}
-where $d_k=64$ (768 hidden dim / 12 heads), enabling parallel contextual pattern capture.
+where $d_k = 64$ (768 hidden dim / 12 heads), capturing contextual patterns in parallel.
 
 % ════════════════════════════════════════════════════════════
-\chapter{System Architecture}
+\chapter{Requirements}
 % ════════════════════════════════════════════════════════════
 
-\section{Technology Stack}
+\section{Functional Requirements — Monitoring (RF-MON)}
+
+\begin{reqenv}{RF-MON-01}{Academic Offer Parameterization}
+\reqrow{Code}{RF-MON-01}
+\reqrow{Type}{Functional — \textcolor{uscoRed}{\textbf{High priority}}}
+\reqrow{Description}{The Program Director creates a monitoring call with: academic period, subject (FK), type (ENUM 11 values), available slots, minimum GPA, and additional requirements. The system auto-generates a unique code.}
+\reqrow{Process}{1.\ Validate JWT (role: jefe\_programa or admin). \newline 2.\ Auto-generate code \texttt{CONV-YYYYMM-XXX}. \newline 3.\ Persist with state = borrador.}
+\reqrow{Criteria}{Unique code without duplicates. Creation time $\leq 3$ s. Returns HTTP 201.}
+\end{reqenv}
+
+\begin{reqenv}{RF-MON-05}{Selection Algorithm — Acuerdo 012/2023 Art.~4}
+\reqrow{Code}{RF-MON-05}
+\reqrow{Type}{Functional — \textcolor{uscoRed}{\textbf{Critical priority}}}
+\reqrow{Description}{Applies: $0.4\bar{x}+0.3\%_{cred}+0.2\,g_{subj}+0.1\,g_{int}$. Generates ranking and invokes AI prediction in parallel. Issues FO-14 act as PDF.}
+\reqrow{Process}{1.\ Retrieve all applicant evaluations. \newline 2.\ Apply official formula. \newline 3.\ Invoke Flask AI microservice. \newline 4.\ Generate ranking + FO-14 act.}
+\reqrow{Criteria}{Exact Art.~4 formula. Hierarchical tie-breaking. Signed PDF is immutable.}
+\end{reqenv}
+
+\begin{reqenv}{RF-IOT-01}{GPS Telemetry — ESP32 + NEO-6M}
+\reqrow{Code}{RF-IOT-01 to RF-IOT-07}
+\reqrow{Type}{IoT — \textcolor{uscoRed}{\textbf{High priority}}}
+\reqrow{Hardware}{ESP32 DevKit V1 (dual-core 240 MHz, WiFi 802.11 b/g/n) + u-blox NEO-6M (2.5 m CEP, 1 Hz, NMEA 0183)}
+\reqrow{Protocol}{HTTP/1.1 REST POST every 60 s with header \texttt{X-Api-Key: iot\_device\_key\_12345}}
+\reqrow{GPS fields}{latitude, longitude, altitude, speed\_kmh, course, satellites, hdop, datetime\_gps}
+\reqrow{Telemetry}{battery\_voltage (V), wifi\_rssi (dBm), uptime\_seconds}
+\reqrow{Criteria}{WiFi auto-reconnect with exponential backoff. GeoJSON route export. Public \texttt{/iot/health}.}
+\end{reqenv}
+
+\begin{reqenv}{RF-OCR-01}{CNN OCR — Text Extraction}
+\reqrow{Code}{RF-OCR-01 to RF-OCR-06}
+\reqrow{Type}{AI / Vision — Medium priority}
+\reqrow{CNN Architecture}{Input(128×128×1)→Conv2D(32)+BN+MaxPool→Conv2D(64)+BN→Conv2D(128)+BN→Conv2D(256)+GAP→Dense(512)→Dense(37,softmax)}
+\reqrow{Criteria}{37 classes (A--Z, 0--9, blank). Confidence $< 75\%$ escalates to manual review. Accuracy $\geq 90\%$.}
+\end{reqenv}
+
+\begin{reqenv}{RF-NLP-01}{Transformer NLP — Letter Analysis}
+\reqrow{Code}{RF-NLP-01 to RF-NLP-06}
+\reqrow{Type}{AI / NLP — \textcolor{uscoRed}{\textbf{High priority}}}
+\reqrow{Description}{DistilBERT-base-uncased evaluates motivation letters: quality\_score (0--2), sentiment, coherence (0--1), key\_phrases, attention\_weights for explainability.}
+\reqrow{Criteria}{Max token length: 512. Batch analysis up to 50 texts. Response time $\leq 5$ s.}
+\end{reqenv}
+
+\section{Non-Functional Requirements}
 
 \begin{center}
-\begin{tabularx}{\textwidth}{|l|l|l|X|}
+\begin{tabularx}{\textwidth}{|>{\bfseries\columncolor{rowGray}}p{1.8cm}|p{2.8cm}|X|p{1.8cm}|}
 \hline
 \rowcolor{tableHdr}
-\textcolor{white}{\textbf{Layer}} & \textcolor{white}{\textbf{Technology}} &
-\textcolor{white}{\textbf{Version}} & \textcolor{white}{\textbf{Role}} \\
+\textcolor{white}{\textbf{ID}} &
+\textcolor{white}{\textbf{Category}} &
+\textcolor{white}{\textbf{Description}} &
+\textcolor{white}{\textbf{Priority}} \\
 \hline
-\rowcolor{rowOdd}Frontend     & React + TypeScript    & 18 / 5    & Institutional SPA \\
-\hline\rowcolor{rowEven}UI/UX       & TailwindCSS + shadcn/ui & 3.x     & Design system \\
-\hline\rowcolor{rowOdd}Backend      & FastAPI + Uvicorn     & 0.115     & Main REST API \\
-\hline\rowcolor{rowEven}Database     & PostgreSQL            & 16        & Transactional persistence \\
-\hline\rowcolor{rowOdd}ORM          & SQLAlchemy + Alembic  & 2.x       & DB abstraction + migrations \\
-\hline\rowcolor{rowEven}AI Service   & Flask                 & 2.3       & ML/CNN/NLP inference \\
-\hline\rowcolor{rowOdd}ML           & Scikit-learn          & 1.4       & Random Forest, DT, MLP \\
-\hline\rowcolor{rowEven}Deep Learning & TensorFlow/Keras     & 2.18      & CNN OCR \\
-\hline\rowcolor{rowOdd}NLP          & PyTorch + HuggingFace & 2.x / 4.x & DistilBERT \\
-\hline\rowcolor{rowEven}IoT          & ESP32 + NEO-6M        & —         & GPS telemetry \\
-\hline\rowcolor{rowOdd}Containers   & Docker Compose        & 2.x       & Orchestration (4 services) \\
-\hline\rowcolor{rowEven}Cloud        & AWS EC2 t2.micro      & —         & Public infrastructure \\
+RNF-01 & Security — RBAC & 6 roles with function segregation; HTTP 403 on unauthorized access & Critical \\
+\hline
+RNF-02 & Security — Crypto & JWT HS256, bcrypt (12 rounds), HTTPS/TLS 1.2+, HSTS & Critical \\
+\hline
+RNF-03 & Performance & API p95 $< 500$ ms; AI $< 2$ s; DB $< 100$ ms & High \\
+\hline
+RNF-04 & Availability & 99\% uptime during academic periods & High \\
+\hline
+RNF-05 & Audit & Immutable log of all CRUD operations & Critical \\
+\hline
+RNF-06 & Scalability & Stateless backend; Docker for horizontal scaling & Medium \\
+\hline
+RNF-07 & IoT & WiFi reconnect with exponential backoff (1→60 s) & High \\
 \hline
 \end{tabularx}
 \end{center}
 
-\section{Component Diagram}
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth,keepaspectratio]{Diagrama de Componentes.png}
-  \caption{SIPAM-USCO Complete Component Diagram}
-  \label{fig:components}
-\end{figure}
+% ════════════════════════════════════════════════════════════
+\chapter{Use Cases and User Stories}
+% ════════════════════════════════════════════════════════════
 
-\section{Deployment Architecture — AWS EC2}
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth,keepaspectratio]{Diagrama de Despliegue (Deployment).png}
-  \caption{Deployment Diagram — AWS EC2 with IoT Field Devices}
-  \label{fig:deployment}
-\end{figure}
+\section{System Actors}
 
 \begin{center}
-\begin{tabularx}{\textwidth}{|l|X|l|X|}
+\begin{tabularx}{\textwidth}{|>{\bfseries\columncolor{rowGray}}p{3.2cm}|X|}
 \hline
 \rowcolor{tableHdr}
-\multicolumn{2}{|c|}{\textcolor{white}{\textbf{AWS Infrastructure}}} &
-\multicolumn{2}{c|}{\textcolor{white}{\textbf{Docker Containers}}} \\
+\textcolor{white}{\textbf{Actor}} &
+\textcolor{white}{\textbf{Role and Responsibilities}} \\
 \hline
-\rowcolor{rowOdd}Instance & t2.micro (1 vCPU, 1 GB RAM) & \texttt{db} & postgres:16-alpine \\
-\hline\rowcolor{rowEven}OS & Ubuntu 22.04 LTS & \texttt{backend} & python:3.11-slim (port 8000) \\
-\hline\rowcolor{rowOdd}Public IP & 18.222.152.152 & \texttt{ai\_service} & python:3.11-slim (port 5001) \\
-\hline\rowcolor{rowEven}Storage & 29 GB SSD & \texttt{frontend} & nginx:alpine (port 80) \\
+Admin & Full system management: users, configuration, audit log \\
+\hline
+Decano & Academic supervision, practice approvals, budget control \\
+\hline
+Jefe de Programa & Create convocatorias, run selection algorithm, generate acts \\
+\hline
+Profesor & Evaluate applicants, manage field practices, NLP letter analysis \\
+\hline
+Estudiante & Apply to convocatorias, upload documents, view AI prediction \\
+\hline
+ESP32 IoT Device & Physical device sending GPS coordinates via API Key \\
+\hline
+AI Microservice & Flask system processing ML, OCR, and NLP inferences \\
 \hline
 \end{tabularx}
 \end{center}
 
+\section{User Stories}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|>{\bfseries\columncolor{rowGray}}p{1.8cm}|p{2.5cm}|X|p{1.5cm}|}
+\hline
+\rowcolor{tableHdr}
+\textcolor{white}{\textbf{ID}} &
+\textcolor{white}{\textbf{Role}} &
+\textcolor{white}{\textbf{As ... I want ... so that ...}} &
+\textcolor{white}{\textbf{Status}} \\
+\hline
+US-01 & Any user & Log in with institutional code to access role-based features & \textcolor{forestgreen}{\checkmark} \\
+\hline
+US-05 & Jefe Programa & Create a monitoring convocatoria so eligible students can apply & \textcolor{forestgreen}{\checkmark} \\
+\hline
+US-12 & Student & Apply to an open convocatoria to be evaluated as a subject monitor & \textcolor{forestgreen}{\checkmark} \\
+\hline
+US-15 & Jefe Programa & Run the automated algorithm to get the AI-enhanced ranking & \textcolor{forestgreen}{\checkmark} \\
+\hline
+US-20 & Student & See my AI-predicted selection probability to know my chances & \textcolor{forestgreen}{\checkmark} \\
+\hline
+US-21 & Student & Upload my ID card and have the system extract my number via OCR & \textcolor{forestgreen}{\checkmark} \\
+\hline
+US-22 & Profesor & Get objective NLP analysis of motivation letters for uniform grading & \textcolor{forestgreen}{\checkmark} \\
+\hline
+US-30 & Profesor & Monitor real-time GPS location of the group during field practices & \textcolor{forestgreen}{\checkmark} \\
+\hline
+\end{tabularx}
+\end{center}
+
+\subsection{Acceptance Criteria — Critical Stories}
+
+\textbf{US-12 (Application)}: System automatically validates GPA $\geq 3.5$, credits $\geq 40\%$,
+and absence of sanctions before allowing inscription. Returns HTTP 400 with descriptive message if
+requirements not met.
+
+\textbf{US-20 (AI Prediction)}: Probability 0--100\% with SHAP feature importance. Comparison of
+3 models. Response time $\leq 2$ s.
+
+\textbf{US-30 (IoT GPS)}: ESP32 sends position every 60 s. Fields: lat, lng, altitude, speed,
+satellites, battery, WiFi signal. History queryable and exportable as GeoJSON.
+
 % ════════════════════════════════════════════════════════════
-\chapter{Software Engineering: UML and Database}
+\chapter{Use Case Diagrams}
 % ════════════════════════════════════════════════════════════
 
-\section{Entity-Relationship Diagram}
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth,keepaspectratio]{Diagrama Entidad-Relación (ER Completo).png}
-  \caption{Full ER Diagram — PostgreSQL 16 (8 core tables + iot\_tracking)}
-  \label{fig:er_diagram}
-\end{figure}
+\section{General Use Case Diagram}
 
-\section{Class Diagram}
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth,keepaspectratio]{Diagrama de Clases (Class Diagram).png}
-  \caption{UML Class Diagram — FastAPI Backend}
-  \label{fig:class_diagram}
-\end{figure}
-
-% ════════════════════════════════════════════════════════════
-\chapter{Use Cases and Process Flows}
-% ════════════════════════════════════════════════════════════
-
-\section{Integrated Use Case Diagram}
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth,keepaspectratio]{Diagrama_Casos_de_Uso.jpg}
-  \caption{Integrated Use Case Diagram (Acuerdo 012/2023 + AI + IoT)}
+  \caption{Integrated Use Case Diagram — Acuerdo 012/2023 + AI + IoT}
   \label{fig:casos_uso}
 \end{figure}
 
-\section{Student Application Activity Flow}
+\section{Activity Diagram — Application Flow}
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth,keepaspectratio]{Diagrama de Actividad - Flujo de Postulación.png}
   \caption{Activity Diagram — Student Application Process}
-  \label{fig:activity}
+  \label{fig:actividad}
 \end{figure}
 
-\section{Convocatoria State Machine}
+\section{State Machine — Convocatoria Lifecycle}
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth,keepaspectratio]{Diagrama de Estado - Máquina de Estados Convocatoria.png}
@@ -353,158 +475,43 @@ where $d_k=64$ (768 hidden dim / 12 heads), enabling parallel contextual pattern
   \label{fig:state_machine}
 \end{figure}
 
-Allowed transitions: \textbf{borrador} $\to$ \textbf{abierta} $\to$ \textbf{cerrada} $\to$ \textbf{en\_evaluacion} $\to$ \textbf{finalizada}. No reverse transitions permitted.
+Allowed transitions: \textbf{borrador} $\to$ \textbf{abierta} $\to$ \textbf{cerrada} $\to$
+\textbf{en\_evaluacion} $\to$ \textbf{finalizada}. No reverse transitions are permitted.
 
-\section{AI-Integrated Selection Sequence}
+\section{Sequence Diagram — AI Selection Algorithm}
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth,keepaspectratio]{Diagrama de Secuencia - Algoritmo de Selección con IA.png}
-  \caption{Sequence Diagram — AI-Driven Selection Algorithm Execution}
+  \caption{Sequence Diagram — AI Selection Algorithm Execution}
   \label{fig:seq_ai}
 \end{figure}
 
-% ════════════════════════════════════════════════════════════
-\chapter{Requirements Specification}
-% ════════════════════════════════════════════════════════════
+\section{Sequence Diagram — Convocatoria Process}
 
-\section{Functional Requirements — Monitoring (RF-MON)}
-
-\begin{reqenv}{RF-MON-01}{Academic Offer Parameterization}
-\reqrow{Code}{RF-MON-01}
-\reqrow{Type}{Functional}
-\reqrow{Priority}{\textcolor{uscoRed}{\textbf{High}}}
-\reqrow{Description}{The Program Director creates a monitoring call specifying: academic period, subject, monitoring type, available slots, and requirements. The system auto-generates a unique code.}
-\reqrow{Process}{1. Validate session (role: jefe\_programa or admin). \newline 2. Auto-generate unique code. \newline 3. Persist in DB with status = borrador.}
-\reqrow{Acceptance Criteria}{Unique code generated without duplicates. Creation time $\leq 3$ s.}
-\end{reqenv}
-
-\begin{reqenv}{RF-MON-02}{Eligibility Requirements Validation}
-\reqrow{Code}{RF-MON-02}
-\reqrow{Type}{Functional}
-\reqrow{Priority}{\textcolor{uscoRed}{\textbf{High}}}
-\reqrow{Description}{The system automatically validates: GPA $\geq 3.5$, approved credits $\geq 40\%$, and absence of active disciplinary sanctions before allowing application.}
-\reqrow{Acceptance Criteria}{Returns HTTP 400 with descriptive message if requirements unmet. Validation time $\leq 1$ s.}
-\end{reqenv}
-
-\begin{reqenv}{RF-MON-05}{Automated Scoring Algorithm (Acuerdo 012/2023)}
-\reqrow{Code}{RF-MON-05}
-\reqrow{Type}{Functional}
-\reqrow{Priority}{\textcolor{uscoRed}{\textbf{Critical}}}
-\reqrow{Description}{Applies the official Art.~4 formula: $0.4\bar{x}+0.3\%_{cred}+0.2\,g_{subj}+0.1\,g_{int}$. Generates ranking and invokes AI prediction in parallel.}
-\reqrow{Acceptance Criteria}{Exact formula from Art.~4. Tie-breaking with predefined hierarchical criteria. FO-14 PDF auto-generated.}
-\end{reqenv}
-
-\begin{reqenv}{RF-MON-07}{FO-14 Digital Record Generation}
-\reqrow{Code}{RF-MON-07}
-\reqrow{Type}{Functional}
-\reqrow{Priority}{\textcolor{uscoRed}{\textbf{High}}}
-\reqrow{Description}{Auto-generates the official selection record as PDF with the ranked list of selected monitors and space for electronic signature.}
-\reqrow{Acceptance Criteria}{Institutional template used. Signed document is immutable.}
-\end{reqenv}
-
-\section{Functional Requirements — Practices (RF-PRA)}
-
-\begin{reqenv}{RF-PRA-10}{66\% Quorum Verification}
-\reqrow{Code}{RF-PRA-10}
-\reqrow{Type}{Functional}
-\reqrow{Priority}{\textcolor{uscoRed}{\textbf{Critical}}}
-\reqrow{Description}{The system validates that at least 66\% of enrolled students have signed the consent form before issuing the service order.}
-\reqrow{Acceptance Criteria}{Real-time signature progress tracking. Service order blocked if quorum not reached.}
-\end{reqenv}
-
-\section{AI Requirements}
-
-\begin{reqenv}{RF-IA-01}{ML Ensemble Prediction}
-\reqrow{Code}{RF-IA-01}
-\reqrow{Type}{AI — Binary Classification}
-\reqrow{Priority}{\textcolor{uscoRed}{\textbf{High}}}
-\reqrow{Description}{Flask microservice (port 5001) computes selection probability (0--100\%) using pre-trained Random Forest with SMOTE balancing and Optuna hyperparameter tuning.}
-\reqrow{Models}{MLP Neural Network, Decision Tree, Random Forest (3+ models required by rubric)}
-\reqrow{Data Split}{70\% training / 15\% validation / 15\% test}
-\reqrow{Serialization}{Joblib for loading without retraining}
-\reqrow{Acceptance Criteria}{Inference $\leq 2$ s. SHAP feature importance. F1-Score $\geq 0.80$.}
-\end{reqenv}
-
-\begin{reqenv}{RF-OCR-01}{Computer Vision — CNN OCR}
-\reqrow{Code}{RF-OCR-01}
-\reqrow{Type}{AI — Computer Vision}
-\reqrow{Priority}{Medium}
-\reqrow{Description}{Custom CNN (TensorFlow/Keras) with Conv2D×4 architecture automatically extracts alphanumeric text from identity document images.}
-\reqrow{Architecture}{Conv2D(32) → BN → Pool → Conv2D(64) → BN → Pool → Conv2D(128) → BN → Pool → Conv2D(256) → GAP → Dense(512) → Dense(37)}
-\reqrow{Pre-processing}{Grayscale + resize 128×128 + normalization [0,1]}
-\reqrow{Acceptance Criteria}{37 classes (A--Z, 0--9, blank). Confidence score returned; if $< 75\%$, escalate to manual review. Accuracy $\geq 90\%$.}
-\end{reqenv}
-
-\begin{reqenv}{RF-NLP-01}{Transformer NLP — Letter Analysis}
-\reqrow{Code}{RF-NLP-01}
-\reqrow{Type}{AI — NLP}
-\reqrow{Priority}{\textcolor{uscoRed}{\textbf{High}}}
-\reqrow{Description}{DistilBERT-base-uncased evaluates motivation letters extracting: quality score (0--2), sentiment (Positive/Neutral/Negative), coherence (0--1), key phrases, attention weights.}
-\reqrow{Acceptance Criteria}{Max token length: 512. Batch analysis up to 50 texts. Response time $\leq 5$ s.}
-\end{reqenv}
-
-\begin{reqenv}{RF-IOT-01}{GPS Telemetry — ESP32 + NEO-6M}
-\reqrow{Code}{RF-IOT-01 to RF-IOT-07}
-\reqrow{Type}{IoT — Hardware + Software}
-\reqrow{Priority}{\textcolor{uscoRed}{\textbf{High}}}
-\reqrow{Hardware}{ESP32 DevKit V1 (dual-core 240 MHz, WiFi 802.11 b/g/n) + u-blox NEO-6M (2.5 m CEP, 1 Hz, NMEA 0183)}
-\reqrow{Protocol}{HTTP/1.1 REST POST every 60 s; X-Api-Key authentication}
-\reqrow{GPS Fields}{latitude, longitude, altitude, speed\_kmh, course, satellites, hdop, datetime\_gps}
-\reqrow{Telemetry Fields}{battery\_voltage, wifi\_rssi, uptime\_seconds}
-\reqrow{Acceptance Criteria}{WiFi auto-reconnect with exponential backoff. GeoJSON route export. Public \texttt{/iot/health} endpoint.}
-\end{reqenv}
-
-\section{Non-Functional Requirements}
-
-\begin{center}
-\begin{tabularx}{\textwidth}{|>{\bfseries}p{2cm}|p{3cm}|X|p{1.8cm}|}
-\hline
-\rowcolor{tableHdr}
-\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Requirement}} &
-\textcolor{white}{\textbf{Description}} & \textcolor{white}{\textbf{Priority}} \\
-\hline
-\rowcolor{rowOdd}RNF-01 & RBAC & 6 roles with function segregation; HTTP 403 on unauthorized access & Critical \\
-\hline\rowcolor{rowEven}RNF-02 & Security & JWT HS256, bcrypt (12 rounds), HTTPS/TLS 1.2+, HSTS & Critical \\
-\hline\rowcolor{rowOdd}RNF-03 & Performance & API p95 $< 500$ ms; AI inference $< 2$ s & High \\
-\hline\rowcolor{rowEven}RNF-04 & Availability & 99\% uptime during academic periods & High \\
-\hline\rowcolor{rowOdd}RNF-05 & Audit Trail & Immutable log of every CRUD operation with user, date, time & Critical \\
-\hline\rowcolor{rowEven}RNF-06 & Scalability & Stateless backend ready for horizontal scaling & Medium \\
-\hline\rowcolor{rowOdd}RNF-07 & Portability & Runs on any Linux server with Docker & Medium \\
-\hline\rowcolor{rowEven}RNF-08 & IoT & WiFi auto-reconnect with exponential backoff & High \\
-\hline
-\end{tabularx}
-\end{center}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,keepaspectratio]{Diagrama de Secuencia - Proceso de Convocatoria.png}
+  \caption{Sequence Diagram — Convocatoria Creation and Management}
+  \label{fig:seq_conv}
+\end{figure}
 
 % ════════════════════════════════════════════════════════════
-\chapter{User Stories}
+\chapter{Data Dictionary and Entity-Relationship Model}
 % ════════════════════════════════════════════════════════════
 
-\begin{center}
-\begin{tabularx}{\textwidth}{|>{\bfseries}p{1.8cm}|l|X|p{2.2cm}|p{1.8cm}|}
-\hline
-\rowcolor{tableHdr}
-\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Role}} &
-\textcolor{white}{\textbf{As ... I want ... so that ...}} &
-\textcolor{white}{\textbf{Epic}} & \textcolor{white}{\textbf{Status}} \\
-\hline
-\rowcolor{rowOdd}US-01 & Any user & Log in with institutional code and password to access role-based features & Auth & \textcolor{forestgreen}{\checkmark\ Done} \\
-\hline\rowcolor{rowEven}US-02 & Admin & Manage users (create, edit, sanction) to maintain the institutional directory & Users & \textcolor{forestgreen}{\checkmark\ Done} \\
-\hline\rowcolor{rowOdd}US-05 & Jefe de Programa & Create a monitoring convocatoria so students can apply for tutoring positions & Monitoring & \textcolor{forestgreen}{\checkmark\ Done} \\
-\hline\rowcolor{rowEven}US-12 & Student & Apply to an open convocatoria to be evaluated as a subject monitor & Monitoring & \textcolor{forestgreen}{\checkmark\ Done} \\
-\hline\rowcolor{rowOdd}US-15 & Jefe de Programa & Run the automated selection algorithm to obtain AI-enhanced ranking & Monitoring & \textcolor{forestgreen}{\checkmark\ Done} \\
-\hline\rowcolor{rowEven}US-20 & Student & See my AI-predicted selection probability to know my chances & AI/ML & \textcolor{forestgreen}{\checkmark\ Done} \\
-\hline\rowcolor{rowOdd}US-21 & Student & Upload my ID card and have the system extract my number via OCR & CNN OCR & \textcolor{forestgreen}{\checkmark\ Done} \\
-\hline\rowcolor{rowEven}US-22 & Professor & Get an objective NLP analysis of motivation letters for uniform evaluation & NLP & \textcolor{forestgreen}{\checkmark\ Done} \\
-\hline\rowcolor{rowOdd}US-30 & Professor & Monitor the group's GPS location in real time during field excursions & IoT GPS & \textcolor{forestgreen}{\checkmark\ Done} \\
-\hline
-\end{tabularx}
-\end{center}
+\section{Entity-Relationship Model}
 
-% ════════════════════════════════════════════════════════════
-\chapter{Data Dictionary and Relational Model}
-% ════════════════════════════════════════════════════════════
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,keepaspectratio]{Diagrama Entidad-Relación (ER Completo).png}
+  \caption{Full ER Diagram — PostgreSQL 16}
+  \label{fig:er_diagram}
+\end{figure}
 
-\section{Table \texttt{users}}
+\section{Data Dictionary}
+
+\subsection{Table \texttt{users}}
 \begin{center}
 \begin{tabularx}{\textwidth}{|l|l|l|X|}
 \hline
@@ -514,20 +521,18 @@ Allowed transitions: \textbf{borrador} $\to$ \textbf{abierta} $\to$ \textbf{cerr
 \hline
 \rowcolor{rowOdd}id & INTEGER & PK, Auto & Unique identifier \\
 \hline\rowcolor{rowEven}codigo & VARCHAR(20) & UNIQUE, NN & Institutional code \\
-\hline\rowcolor{rowOdd}nombres & VARCHAR(100) & NOT NULL & First names \\
-\hline\rowcolor{rowEven}apellidos & VARCHAR(100) & NOT NULL & Last names \\
-\hline\rowcolor{rowOdd}email & VARCHAR(255) & UNIQUE, NN & Institutional email \\
-\hline\rowcolor{rowEven}hashed\_password & VARCHAR(255) & NOT NULL & bcrypt hashed password \\
-\hline\rowcolor{rowOdd}rol & ENUM & NOT NULL & admin | decano | jefe\_programa | profesor | estudiante | auxiliar \\
-\hline\rowcolor{rowEven}promedio & DECIMAL(3,2) & 0--5 & Academic GPA \\
-\hline\rowcolor{rowOdd}porcentaje\_creditos & DECIMAL(5,2) & 0--100 & Approved credits \% \\
-\hline\rowcolor{rowEven}activo & BOOLEAN & DEFAULT TRUE & Account active status \\
-\hline\rowcolor{rowOdd}sancionado & BOOLEAN & DEFAULT FALSE & Disciplinary sanction flag \\
+\hline\rowcolor{rowOdd}nombres / apellidos & VARCHAR(100) & NOT NULL & Full name \\
+\hline\rowcolor{rowEven}email & VARCHAR(255) & UNIQUE, NN & Institutional email \\
+\hline\rowcolor{rowOdd}hashed\_password & VARCHAR(255) & NOT NULL & bcrypt (12 rounds) \\
+\hline\rowcolor{rowEven}rol & ENUM & NOT NULL & admin | decano | jefe\_programa | profesor | estudiante | auxiliar \\
+\hline\rowcolor{rowOdd}promedio & DECIMAL(3,2) & 0--5 & Cumulative GPA \\
+\hline\rowcolor{rowEven}porcentaje\_creditos & DECIMAL(5,2) & 0--100 & \% approved credits \\
+\hline\rowcolor{rowOdd}activo / sancionado & BOOLEAN & DEFAULT T/F & Active status and sanction flag \\
 \hline
 \end{tabularx}
 \end{center}
 
-\section{Table \texttt{convocatorias}}
+\subsection{Table \texttt{convocatorias}}
 \begin{center}
 \begin{tabularx}{\textwidth}{|l|l|l|X|}
 \hline
@@ -536,18 +541,36 @@ Allowed transitions: \textbf{borrador} $\to$ \textbf{abierta} $\to$ \textbf{cerr
 \textcolor{white}{\textbf{Constraint}} & \textcolor{white}{\textbf{Description}} \\
 \hline
 \rowcolor{rowOdd}id & INTEGER & PK, Auto & Convocatoria ID \\
-\hline\rowcolor{rowEven}codigo & VARCHAR(50) & UNIQUE & Auto-generated code \\
+\hline\rowcolor{rowEven}codigo & VARCHAR(50) & UNIQUE & Auto-generated code \texttt{CONV-YYYYMM-XXX} \\
 \hline\rowcolor{rowOdd}titulo & VARCHAR(300) & NOT NULL & Call title \\
-\hline\rowcolor{rowEven}tipo\_monitoria & ENUM & NOT NULL & academica, investigacion, administrativa... (11 types) \\
-\hline\rowcolor{rowOdd}estado & ENUM & NOT NULL & borrador → abierta → cerrada → en\_evaluacion → finalizada \\
+\hline\rowcolor{rowEven}tipo\_monitoria & ENUM & NOT NULL & 11 types (Acuerdo 012/2023 Art.~3) \\
+\hline\rowcolor{rowOdd}estado & ENUM & NOT NULL & borrador→abierta→cerrada→en\_evaluacion→finalizada \\
 \hline\rowcolor{rowEven}promedio\_minimo & DECIMAL(3,2) & DEFAULT 3.5 & Minimum GPA required \\
-\hline\rowcolor{rowOdd}asignatura\_id & INTEGER & FK → asignaturas & Associated subject \\
-\hline\rowcolor{rowEven}profesor\_id & INTEGER & FK → users & Responsible lecturer \\
+\hline\rowcolor{rowOdd}asignatura\_id / profesor\_id & INTEGER & FK & Subject and responsible lecturer \\
 \hline
 \end{tabularx}
 \end{center}
 
-\section{Table \texttt{iot\_tracking} \textnormal{\small(New — GPS Telemetry)}}
+\subsection{Table \texttt{postulaciones}}
+\begin{center}
+\begin{tabularx}{\textwidth}{|l|l|l|X|}
+\hline
+\rowcolor{tableHdr}
+\textcolor{white}{\textbf{Column}} & \textcolor{white}{\textbf{Type}} &
+\textcolor{white}{\textbf{Constraint}} & \textcolor{white}{\textbf{Description}} \\
+\hline
+\rowcolor{rowOdd}id & INTEGER & PK, Auto & Application ID \\
+\hline\rowcolor{rowEven}convocatoria\_id / estudiante\_id & INTEGER & FK & Convocatoria and student \\
+\hline\rowcolor{rowOdd}carta\_motivacion & TEXT & MIN 30 chars & Motivation letter \\
+\hline\rowcolor{rowEven}nota\_asignatura / nota\_entrevista & DECIMAL(3,2) & 0--5 & Evaluated grades \\
+\hline\rowcolor{rowOdd}puntaje\_final & DECIMAL(5,4) & Computed & Weighted formula result \\
+\hline\rowcolor{rowEven}ai\_prediction & DECIMAL(5,4) & & AI-predicted probability \\
+\hline\rowcolor{rowOdd}estado & ENUM & NOT NULL & pending | under\_review | selected | rejected \\
+\hline
+\end{tabularx}
+\end{center}
+
+\subsection{Table \texttt{iot\_tracking} — GPS Telemetry (New)}
 \begin{center}
 \begin{tabularx}{\textwidth}{|l|l|l|X|}
 \hline
@@ -558,132 +581,141 @@ Allowed transitions: \textbf{borrador} $\to$ \textbf{abierta} $\to$ \textbf{cerr
 \rowcolor{rowOdd}id & INTEGER & PK, Auto & GPS record ID \\
 \hline\rowcolor{rowEven}device\_id & VARCHAR(50) & NOT NULL & ESP32 device UUID \\
 \hline\rowcolor{rowOdd}practice\_id & VARCHAR(50) & NOT NULL & Associated practice code \\
-\hline\rowcolor{rowEven}latitude & DECIMAL(10,8) & --90 to 90 & GPS latitude \\
-\hline\rowcolor{rowOdd}longitude & DECIMAL(11,8) & --180 to 180 & GPS longitude \\
-\hline\rowcolor{rowEven}altitude & DECIMAL(8,2) & & Altitude in meters \\
-\hline\rowcolor{rowOdd}speed\_kmh & DECIMAL(6,2) & $\geq 0$ & Speed in km/h \\
-\hline\rowcolor{rowEven}satellites & INTEGER & $\geq 0$ & Active GPS satellites \\
-\hline\rowcolor{rowOdd}battery\_voltage & DECIMAL(4,2) & 0--5 & Device battery voltage (V) \\
-\hline\rowcolor{rowEven}wifi\_rssi & INTEGER & & WiFi signal strength (dBm) \\
+\hline\rowcolor{rowEven}latitude / longitude & DECIMAL & --90/90 -- --180/180 & GPS coordinates \\
+\hline\rowcolor{rowOdd}altitude & DECIMAL(8,2) & & Altitude in meters \\
+\hline\rowcolor{rowEven}speed\_kmh & DECIMAL(6,2) & $\geq 0$ & Speed in km/h \\
+\hline\rowcolor{rowOdd}satellites / hdop & INTEGER / DECIMAL & $\geq 0$ & GPS signal quality \\
+\hline\rowcolor{rowEven}battery\_voltage / wifi\_rssi & DECIMAL / INTEGER & & Device telemetry \\
 \hline\rowcolor{rowOdd}recorded\_at & TIMESTAMP & DEFAULT NOW() & Server receive timestamp \\
 \hline
 \end{tabularx}
 \end{center}
 
 % ════════════════════════════════════════════════════════════
-\chapter{GUI Design and Mockups}
+\chapter{Class Diagrams}
 % ════════════════════════════════════════════════════════════
 
-\section{Design System}
+\section{Class Diagram — FastAPI Backend}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,keepaspectratio]{Diagrama de Clases (Class Diagram).png}
+  \caption{UML Class Diagram — FastAPI Backend (SQLAlchemy ORM)}
+  \label{fig:class_diagram}
+\end{figure}
+
+\section{Key Classes}
+
 \begin{center}
-\begin{tabularx}{\textwidth}{|l|X|}
+\begin{tabularx}{\textwidth}{|>{\bfseries\columncolor{rowGray}}p{3cm}|X|p{3cm}|}
 \hline
-\rowcolor{tableHdr}\textcolor{white}{\textbf{Element}} & \textcolor{white}{\textbf{Specification}} \\
+\rowcolor{tableHdr}
+\textcolor{white}{\textbf{Class}} &
+\textcolor{white}{\textbf{Responsibility}} &
+\textcolor{white}{\textbf{Relationships}} \\
 \hline
-\rowcolor{rowOdd}Primary colour & USCO Red \#8D191D — Headers, buttons, accents \\
-\hline\rowcolor{rowEven}Secondary colour & USCO Gold \#C8B567 — Badges, highlights \\
-\hline\rowcolor{rowOdd}Background & \#F5F2EA — Main canvas \\
-\hline\rowcolor{rowEven}Typography & Inter (body), JetBrains Mono (code) \\
-\hline\rowcolor{rowOdd}CSS Framework & TailwindCSS 3.x + shadcn/ui + Lucide React \\
+User & System actors: authentication, role validation, profile & 1..* Postulacion \newline 1..* Convocatoria \\
+\hline
+Convocatoria & Convocatoria lifecycle + state machine & 1..* Postulacion \newline 1 Asignatura \\
+\hline
+Postulacion & Student application: weighted score + AI prediction & * Archivos \newline 1 Convocatoria \\
+\hline
+IoTTracking & GPS time series by practice\_id & N Postulacion \\
+\hline
+AuditLog & Immutable log of all CRUD actions & 1 User \\
+\hline
+AIService & Service encapsulating HTTP calls to Flask microservice & Convocatoria \newline Postulacion \\
 \hline
 \end{tabularx}
 \end{center}
 
-\section{Key Screen Wireframes}
+\section{Component Diagram}
 
-\begin{lstlisting}[caption={Login Screen Mockup},numbers=none]
-+--------------------------------------------------+
-|  [USCO Logo]            SIPAM-USCO              |
-|                                                  |
-|  Institutional Code:  [____________________]     |
-|  Password:            [____________________]     |
-|               [      Log In      ]               |
-|  Role-based redirect:                            |
-|  Admin → /admin  |  Student → /convocatorias    |
-+--------------------------------------------------+
-\end{lstlisting}
-
-\begin{lstlisting}[caption={AI Dashboard (Professor View)},numbers=none]
-+--------------------------------------------------+
-|  AI Analysis Dashboard                           |
-|  ─────────────────────────────────────────────  |
-|  CNN OCR                  NLP DistilBERT         |
-|  [Upload JPG/PNG]         [Enter letter text...] |
-|  CNN → "JUAN CARLOS"      Quality: HIGH (2)      |
-|  Confidence: 94.2%        Sentiment: Positive    |
-|                           Coherence: 0.92        |
-|  ─────────────────────────────────────────────  |
-|  IoT GPS — Practice: PRAC_001                    |
-|  ESP32_GPS_001  Bat:4.2V  Sat:8  Speed:45 km/h  |
-|  [View Live Map]  [Export GeoJSON]               |
-+--------------------------------------------------+
-\end{lstlisting}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,keepaspectratio]{Diagrama de Componentes.png}
+  \caption{Component Diagram — Full System Architecture}
+  \label{fig:components}
+\end{figure}
 
 % ════════════════════════════════════════════════════════════
-\chapter{API Catalog and Web Services}
+\chapter{Web Services Catalogue and API Documentation}
 % ════════════════════════════════════════════════════════════
 
 \section{API Overview}
-\begin{center}
-\begin{tabularx}{\textwidth}{|l|X|}
-\hline
-\rowcolor{tableHdr}\textcolor{white}{\textbf{Parameter}} & \textcolor{white}{\textbf{Value}} \\
-\hline
-\rowcolor{rowOdd}Base URL & \texttt{http://18.222.152.152/api/v1} \\
-\hline\rowcolor{rowEven}Authentication & Bearer JWT in \texttt{Authorization} header \\
-\hline\rowcolor{rowOdd}Format & JSON (\texttt{application/json}) \\
-\hline\rowcolor{rowEven}Documentation & \texttt{/docs} (Swagger UI) \textbar\ \texttt{/redoc} (ReDoc) \\
-\hline
-\end{tabularx}
-\end{center}
 
-\section{Endpoint Summary}
 \begin{center}
-\begin{tabularx}{\textwidth}{|l|p{5.5cm}|p{2.8cm}|X|}
+\begin{tabularx}{\textwidth}{|>{\bfseries\columncolor{rowGray}}p{3cm}|X|}
 \hline
 \rowcolor{tableHdr}
-\textcolor{white}{\textbf{Method}} & \textcolor{white}{\textbf{Endpoint}} &
-\textcolor{white}{\textbf{Auth}} & \textcolor{white}{\textbf{Description}} \\
+\textcolor{white}{\textbf{Parameter}} & \textcolor{white}{\textbf{Value}} \\
 \hline
-\rowcolor{rowOdd}POST & /auth/login & Public & JWT login \\
-\hline\rowcolor{rowEven}GET & /auth/me & Bearer JWT & Authenticated user profile \\
-\hline\rowcolor{rowOdd}GET & /convocatorias/ & Any role & List monitoring calls \\
-\hline\rowcolor{rowEven}POST & /convocatorias/ & Jefe/Admin & Create call \\
-\hline\rowcolor{rowOdd}POST & /convocatorias/\{id\}/postular & Student & Apply \\
-\hline\rowcolor{rowEven}POST & /convocatorias/\{id\}/ejecutar-seleccion & Jefe/Admin & Run algorithm \\
-\hline\rowcolor{rowOdd}GET & /convocatorias/\{id\}/fo14 & Profesor+ & Download FO-14 PDF \\
-\hline\rowcolor{rowEven}GET & /iot/health & Public & IoT module status \\
-\hline\rowcolor{rowOdd}POST & /iot/tracking/ & X-Api-Key & Ingest GPS data from ESP32 \\
-\hline\rowcolor{rowEven}GET & /iot/tracking/\{id\} & Bearer JWT & Tracking history \\
-\hline\rowcolor{rowOdd}GET & /iot/tracking/\{id\}/map & Bearer JWT & GeoJSON route \\
-\hline\rowcolor{rowEven}GET & /ocr/models & Public & CNN model info \\
-\hline\rowcolor{rowOdd}POST & /ocr/extract & Bearer JWT & OCR text extraction \\
-\hline\rowcolor{rowEven}GET & /nlp/models & Public & DistilBERT model info \\
-\hline\rowcolor{rowOdd}POST & /nlp/analyze & Bearer JWT & NLP letter analysis \\
-\hline\rowcolor{rowEven}POST & /nlp/batch\_analyze & Profesor/Admin & Batch analysis (max 50) \\
+Base URL & \texttt{http://18.222.152.152/api/v1} \\
+\hline
+Authentication & \texttt{Authorization: Bearer \{jwt\_token\}} \\
+\hline
+Format & JSON (\texttt{Content-Type: application/json}) \\
+\hline
+Swagger UI & \url{http://18.222.152.152/docs} \\
+\hline
+ReDoc & \url{http://18.222.152.152/redoc} \\
 \hline
 \end{tabularx}
 \end{center}
 
-\section{Usage Examples}
+\section{Complete Endpoint Catalogue}
 
-\begin{lstlisting}[language=bash,caption={POST /auth/login — JWT Authentication}]
+\begin{center}
+\begin{tabularx}{\textwidth}{|>{\bfseries}l|p{6.5cm}|p{3cm}|X|}
+\hline
+\rowcolor{tableHdr}
+\textcolor{white}{\textbf{Method}} &
+\textcolor{white}{\textbf{Endpoint}} &
+\textcolor{white}{\textbf{Auth}} &
+\textcolor{white}{\textbf{Description}} \\
+\hline
+\rowcolor{rowOdd}POST & /auth/login & Public & Login — returns JWT \\
+\hline\rowcolor{rowEven}GET & /auth/me & Bearer JWT & Authenticated user profile \\
+\hline\rowcolor{rowOdd}GET & /auth/usuarios & Admin/Jefe/Decano & List users with filters \\
+\hline\rowcolor{rowEven}GET & /convocatorias/ & Any role & List monitoring calls \\
+\hline\rowcolor{rowOdd}POST & /convocatorias/ & Jefe/Admin & Create convocatoria \\
+\hline\rowcolor{rowEven}PATCH & /convocatorias/\{id\}/estado & Jefe/Admin & Change state (transition) \\
+\hline\rowcolor{rowOdd}POST & /convocatorias/\{id\}/postular & Student & Apply to convocatoria \\
+\hline\rowcolor{rowEven}POST & /convocatorias/\{id\}/ejecutar-seleccion & Jefe/Admin & Run AI selection algorithm \\
+\hline\rowcolor{rowOdd}GET & /convocatorias/\{id\}/fo14 & Profesor+ & Download FO-14 act PDF \\
+\hline\rowcolor{rowEven}GET & /iot/health & Public & IoT GPS module status \\
+\hline\rowcolor{rowOdd}POST & /iot/tracking/ & X-Api-Key & Ingest GPS data from ESP32 \\
+\hline\rowcolor{rowEven}GET & /iot/tracking/\{id\} & Bearer JWT & Route history \\
+\hline\rowcolor{rowOdd}GET & /iot/tracking/\{id\}/map & Bearer JWT & Export GeoJSON route \\
+\hline\rowcolor{rowEven}GET & /ocr/models & Public & CNN model information \\
+\hline\rowcolor{rowOdd}POST & /ocr/extract & Bearer JWT & OCR extraction with CNN \\
+\hline\rowcolor{rowEven}GET & /nlp/models & Public & DistilBERT model information \\
+\hline\rowcolor{rowOdd}POST & /nlp/analyze & Bearer JWT & Analyze letter with DistilBERT \\
+\hline\rowcolor{rowEven}POST & /nlp/batch\_analyze & Profesor/Admin & Batch analysis (max 50 texts) \\
+\hline
+\end{tabularx}
+\end{center}
+
+\section{cURL Usage Examples}
+
+\begin{lstlisting}[language=bash,caption={Login — obtain JWT token}]
 curl -X POST http://18.222.152.152/api/v1/auth/login \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "username=STUDENT_CODE&password=secret"
+  -d "username=200041234&password=my_password"
 # {"access_token":"eyJhbGci...","token_type":"bearer"}
 \end{lstlisting}
 
-\begin{lstlisting}[language=bash,caption={POST /iot/tracking/ — GPS data from ESP32}]
+\begin{lstlisting}[language=bash,caption={ESP32 sends GPS data (X-Api-Key auth)}]
 curl -X POST http://18.222.152.152/api/v1/iot/tracking/ \
   -H "X-Api-Key: iot_device_key_12345" \
   -H "Content-Type: application/json" \
   -d '{"device_id":"ESP32_GPS_001","practice_id":"PRAC_001",
-       "latitude":2.4419,"longitude":-76.6063,"altitude":1500,
-       "satellites":8,"battery_voltage":4.2,"wifi_rssi":-65}'
+       "latitude":2.4419,"longitude":-76.6063,
+       "altitude":1500,"satellites":8,"battery_voltage":4.2}'
+# {"status":"success","gps_valid":true,"record_id":42}
 \end{lstlisting}
 
-\begin{lstlisting}[language=bash,caption={POST /nlp/analyze — DistilBERT Letter Analysis}]
+\begin{lstlisting}[language=bash,caption={NLP analysis with DistilBERT}]
 curl -X POST http://18.222.152.152/api/v1/nlp/analyze \
   -H "Authorization: Bearer eyJhbGci..." \
   -H "Content-Type: application/json" \
@@ -692,117 +724,104 @@ curl -X POST http://18.222.152.152/api/v1/nlp/analyze \
 #  "key_phrases":["motivated","performance","academic"]}
 \end{lstlisting}
 
-% ════════════════════════════════════════════════════════════
-\chapter{Artificial Intelligence Architecture}
-% ════════════════════════════════════════════════════════════
+\begin{lstlisting}[language=bash,caption={CNN OCR extraction from identity document}]
+curl -X POST http://18.222.152.152/api/v1/ocr/extract \
+  -H "Authorization: Bearer eyJhbGci..." \
+  -F "file=@id_card.jpg"
+# {"full_text":"JUAN CARLOS PEREZ 1023456789","confidence":0.942}
+\end{lstlisting}
 
-\section{Module 1 — ML Predictive Ensemble}
+\section{Deployment Diagram}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,keepaspectratio]{Diagrama de Despliegue (Deployment).png}
+  \caption{Deployment Diagram — AWS EC2 + Docker Compose + IoT Devices}
+  \label{fig:deployment}
+\end{figure}
 
 \begin{center}
-\begin{tabularx}{\textwidth}{|l|X|c|c|c|}
+\begin{tabularx}{\textwidth}{|>{\bfseries\columncolor{rowGray}}p{2.5cm}|l|l|X|}
 \hline
 \rowcolor{tableHdr}
-\textcolor{white}{\textbf{Model}} & \textcolor{white}{\textbf{Configuration}} &
-\textcolor{white}{\textbf{Accuracy}} & \textcolor{white}{\textbf{F1}} & \textcolor{white}{\textbf{AUC}} \\
+\textcolor{white}{\textbf{Service}} &
+\textcolor{white}{\textbf{Docker Image}} &
+\textcolor{white}{\textbf{Port}} &
+\textcolor{white}{\textbf{Function}} \\
 \hline
-\rowcolor{rowOdd}MLP Neural Network & 128→64→32→1, ReLU, Adam & 0.86 & 0.85 & 0.91 \\
-\hline\rowcolor{rowEven}Decision Tree & Max depth 10, Gini criterion & 0.81 & 0.81 & 0.88 \\
-\hline\rowcolor{rowOdd}\textbf{Random Forest} & \textbf{200 trees, depth 15, Optuna-tuned} & \textbf{0.91} & \textbf{0.89} & \textbf{0.94} \\
+frontend & nginx:alpine & 80 & React static server + reverse proxy \\
+\hline
+backend & python:3.11-slim & 8000 & FastAPI main REST API \\
+\hline
+ai\_service & python:3.11-slim & 5001 & Flask — ML, CNN, NLP \\
+\hline
+db & postgres:16-alpine & 5432 & PostgreSQL 16 — persistence \\
 \hline
 \end{tabularx}
 \end{center}
 
-\noindent\textbf{Best practices applied}: 70-15-15 stratified split, SMOTE class balancing, Optuna
-(40 trials Bayesian optimization), StratifiedKFold (5 folds), SHAP explainability,
-\texttt{joblib} serialization.
+% ════════════════════════════════════════════════════════════
+\chapter{Results and Discussion}
+% ════════════════════════════════════════════════════════════
 
-\noindent\textbf{Top SHAP features}: \texttt{nota\_entrevista} (0.31), \texttt{promedio} (0.28),
-\texttt{nota\_asignatura} (0.25), \texttt{porcentaje\_creditos} (0.09).
+\section{AI Model Performance}
 
-\section{Module 2 — CNN OCR Architecture}
+\begin{center}
+\begin{tabularx}{\textwidth}{|l|X|c|c|c|c|}
+\hline
+\rowcolor{tableHdr}
+\textcolor{white}{\textbf{Model}} &
+\textcolor{white}{\textbf{Configuration}} &
+\textcolor{white}{\textbf{Accuracy}} &
+\textcolor{white}{\textbf{F1}} &
+\textcolor{white}{\textbf{AUC}} &
+\textcolor{white}{\textbf{Inf. Time}} \\
+\hline
+\rowcolor{rowOdd}MLP & 128→64→32→1, ReLU, Adam & 0.86 & 0.85 & 0.91 & 180 ms \\
+\hline\rowcolor{rowEven}Decision Tree & Depth 10, Gini & 0.81 & 0.81 & 0.88 & 12 ms \\
+\hline\rowcolor{rowOdd}\textbf{Random Forest} & \textbf{200 trees, Optuna} & \textbf{0.91} & \textbf{0.89} & \textbf{0.94} & \textbf{180 ms} \\
+\hline\rowcolor{rowEven}CNN OCR & Conv2D×4, 37 classes & — & — & — & 3,200 ms \\
+\hline\rowcolor{rowOdd}DistilBERT NLP & 6 layers, 66 M params & — & — & — & 2,800 ms \\
+\hline
+\end{tabularx}
+\end{center}
+
+SHAP feature importance: \texttt{nota\_entrevista} (0.31) $>$ \texttt{promedio} (0.28) $>$
+\texttt{nota\_asignatura} (0.25) $>$ \texttt{porcentaje\_creditos} (0.09).
+
+\section{System Performance Metrics}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{|X|c|c|c|}
+\hline
+\rowcolor{tableHdr}
+\textcolor{white}{\textbf{Metric}} &
+\textcolor{white}{\textbf{Target}} &
+\textcolor{white}{\textbf{Achieved}} &
+\textcolor{white}{\textbf{Status}} \\
+\hline
+\rowcolor{rowOdd}API response time (p95) & $<500$ ms & \textbf{320 ms} & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowEven}PostgreSQL queries & $<100$ ms & \textbf{45 ms} & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowOdd}ML prediction & $<2{,}000$ ms & \textbf{180 ms} & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowEven}CNN OCR & $<5{,}000$ ms & \textbf{3,200 ms} & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowOdd}NLP analysis & $<5{,}000$ ms & \textbf{2,800 ms} & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowEven}IoT GPS ingestion & $<200$ ms & \textbf{95 ms} & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowOdd}CNN OCR accuracy & $\geq90\%$ & \textbf{94.2\%} & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowEven}Random Forest F1 & $\geq0.80$ & \textbf{0.89} & \textcolor{forestgreen}{\checkmark} \\
+\hline
+\end{tabularx}
+\end{center}
+
+\section{Automated Test Coverage}
 
 \begin{center}
 \begin{tabularx}{\textwidth}{|l|c|c|c|}
 \hline
 \rowcolor{tableHdr}
-\textcolor{white}{\textbf{Layer}} & \textcolor{white}{\textbf{Filters/Units}} &
-\textcolor{white}{\textbf{Output Shape}} & \textcolor{white}{\textbf{Parameters}} \\
-\hline
-\rowcolor{rowOdd}Conv2D + BN + MaxPool (Block 1) & 32 @ 3×3 & 63×63×32 & 320 \\
-\hline\rowcolor{rowEven}Conv2D + BN + MaxPool (Block 2) & 64 @ 3×3 & 31×31×64 & 18,496 \\
-\hline\rowcolor{rowOdd}Conv2D + BN + MaxPool (Block 3) & 128 @ 3×3 & 15×15×128 & 73,856 \\
-\hline\rowcolor{rowEven}Conv2D + BN + GAP (Block 4) & 256 @ 3×3 & 256 & 295,168 \\
-\hline\rowcolor{rowOdd}Dense layers & 512 + 256 + 37 & 37 (softmax) & 272,421 \\
-\hline\rowcolor{rowEven}\textbf{Total} & — & — & $\approx$\textbf{2.5 M} \\
-\hline
-\end{tabularx}
-\end{center}
-
-Input: 128×128×1 grayscale image patch. Output: softmax over 37 classes. \textbf{Validation accuracy: 94.2\%}.
-
-\section{Module 3 — Transformer NLP (DistilBERT)}
-
-\begin{center}
-\begin{tabularx}{\textwidth}{|l|X|}
-\hline
-\rowcolor{tableHdr}\textcolor{white}{\textbf{Parameter}} & \textcolor{white}{\textbf{Value}} \\
-\hline
-\rowcolor{rowOdd}Base model & DistilBERT-base-uncased (HuggingFace Transformers) \\
-\hline\rowcolor{rowEven}Transformer layers & 6 encoder layers \\
-\hline\rowcolor{rowOdd}Hidden dimension & 768 \\
-\hline\rowcolor{rowEven}Attention heads & 12 per layer \\
-\hline\rowcolor{rowOdd}Total parameters & 66 million \\
-\hline\rowcolor{rowEven}Tokenizer & WordPiece (30,522 token vocabulary) \\
-\hline\rowcolor{rowOdd}Max token length & 512 tokens \\
-\hline\rowcolor{rowEven}Inference time & $\approx 2.8$ s (CPU) \\
-\hline\rowcolor{rowOdd}Outputs & quality\_score (0--2), sentiment, coherence (0--1), attention\_weights \\
-\hline
-\end{tabularx}
-\end{center}
-
-% ════════════════════════════════════════════════════════════
-\chapter{Testing and Validation}
-% ════════════════════════════════════════════════════════════
-
-\section{Functional Test Flows}
-
-\subsection{F-TEST-01: Complete Monitor Selection Flow}
-\begin{enumerate}[leftmargin=*]
-\item Admin creates Student user (GPA 4.2; credits 75\%)
-\item Program Director creates convocatoria for Programming I
-\item Student applies with motivation letter
-\item Student uploads cédula and RUT (PDF)
-\item Professor grades: subject\_grade=4.5; interview\_grade=4.0
-\item System executes algorithm → Status: selected
-\item FO-14 PDF generated and downloadable
-\item \textbf{Expected}: All steps complete without errors; PDF contains valid data
-\end{enumerate}
-
-\subsection{F-TEST-02: CNN OCR Extraction}
-\begin{enumerate}[leftmargin=*]
-\item Upload identity card image (JPG, 300 DPI)
-\item POST to \texttt{/api/v1/ocr/extract} with Bearer token
-\item Verify extracted text in response
-\item Verify confidence score $\geq 0.80$
-\item \textbf{Expected}: Correct text; response time $< 5$ s
-\end{enumerate}
-
-\subsection{F-TEST-03: IoT GPS Data Pipeline}
-\begin{enumerate}[leftmargin=*]
-\item ESP32 sends POST with valid GPS coordinates (API Key)
-\item Server returns \texttt{\{"status":"success","gps\_valid":true\}}
-\item Professor queries \texttt{/iot/tracking/PRAC\_001}
-\item Full GeoJSON route returned
-\item \textbf{Expected}: Complete pipeline without data loss
-\end{enumerate}
-
-\section{Test Results Summary}
-\begin{center}
-\begin{tabularx}{\textwidth}{|l|c|c|c|}
-\hline
-\rowcolor{tableHdr}
-\textcolor{white}{\textbf{Module}} & \textcolor{white}{\textbf{Tests}} &
-\textcolor{white}{\textbf{Passed}} & \textcolor{white}{\textbf{Coverage}} \\
+\textcolor{white}{\textbf{Module}} &
+\textcolor{white}{\textbf{Tests}} &
+\textcolor{white}{\textbf{Passed}} &
+\textcolor{white}{\textbf{Coverage}} \\
 \hline
 \rowcolor{rowOdd}Authentication & 8 & 8 & 96\% \\
 \hline\rowcolor{rowEven}Convocatorias & 12 & 12 & 91\% \\
@@ -815,46 +834,24 @@ Input: 128×128×1 grayscale image patch. Output: softmax over 37 classes. \text
 \end{tabularx}
 \end{center}
 
-% ════════════════════════════════════════════════════════════
-\chapter{Results and Discussion}
-% ════════════════════════════════════════════════════════════
-
 \section{Functional Achievements}
+
 \begin{center}
 \begin{tabularx}{\textwidth}{|X|c|c|}
 \hline
 \rowcolor{tableHdr}
 \textcolor{white}{\textbf{Feature}} &
-\textcolor{white}{\textbf{Planned}} & \textcolor{white}{\textbf{Implemented}} \\
+\textcolor{white}{\textbf{Planned}} &
+\textcolor{white}{\textbf{Implemented}} \\
 \hline
 \rowcolor{rowOdd}JWT Authentication + 6-role RBAC & \checkmark & \checkmark \\
 \hline\rowcolor{rowEven}Complete monitoring workflow (Acuerdo 012/2023) & \checkmark & \checkmark \\
-\hline\rowcolor{rowOdd}AI prediction (MLP + DT + RF + SMOTE) & \checkmark & \checkmark \\
+\hline\rowcolor{rowOdd}AI prediction (MLP + DT + RF + SMOTE + Optuna) & \checkmark & \checkmark \\
 \hline\rowcolor{rowEven}CNN OCR (37 classes, 94.2\% accuracy) & \checkmark & \checkmark \\
 \hline\rowcolor{rowOdd}Transformer NLP (DistilBERT, batch analysis) & \checkmark & \checkmark \\
-\hline\rowcolor{rowEven}IoT GPS (ESP32 + NEO-6M + HTTP REST) & \checkmark & \checkmark \\
-\hline\rowcolor{rowOdd}FO-14 PDF and FO-46 QR Code generation & \checkmark & \checkmark \\
-\hline\rowcolor{rowEven}AWS EC2 deployment with Docker Compose & \checkmark & \checkmark \\
-\hline
-\end{tabularx}
-\end{center}
-
-\section{Performance Metrics}
-\begin{center}
-\begin{tabularx}{\textwidth}{|X|c|c|}
-\hline
-\rowcolor{tableHdr}
-\textcolor{white}{\textbf{Metric}} &
-\textcolor{white}{\textbf{Target}} & \textcolor{white}{\textbf{Achieved}} \\
-\hline
-\rowcolor{rowOdd}API response time (p95) & $< 500$ ms & \textbf{320 ms} \\
-\hline\rowcolor{rowEven}Database queries & $< 100$ ms & \textbf{45 ms} \\
-\hline\rowcolor{rowOdd}AI prediction (ML) & $< 2{,}000$ ms & \textbf{180 ms} \\
-\hline\rowcolor{rowEven}CNN OCR processing & $< 5{,}000$ ms & \textbf{3{,}200 ms} \\
-\hline\rowcolor{rowOdd}NLP analysis & $< 5{,}000$ ms & \textbf{2{,}800 ms} \\
-\hline\rowcolor{rowEven}IoT data ingestion & $< 200$ ms & \textbf{95 ms} \\
-\hline\rowcolor{rowOdd}CNN OCR accuracy & $\geq 90\%$ & \textbf{94.2\%} \\
-\hline\rowcolor{rowEven}Random Forest F1-Score & $\geq 0.80$ & \textbf{0.89} \\
+\hline\rowcolor{rowEven}IoT GPS (ESP32 + NEO-6M + HTTP REST + GeoJSON) & \checkmark & \checkmark \\
+\hline\rowcolor{rowOdd}FO-14 PDF and FO-46 QR generation & \checkmark & \checkmark \\
+\hline\rowcolor{rowEven}AWS EC2 + Docker Compose deployment & \checkmark & \checkmark \\
 \hline
 \end{tabularx}
 \end{center}
@@ -864,52 +861,59 @@ Input: 128×128×1 grayscale image patch. Output: softmax over 37 classes. \text
 % ════════════════════════════════════════════════════════════
 
 \section{Immediate Improvements}
+
 \begin{enumerate}[leftmargin=*]
-\item \textbf{CNN OCR Production Model}: Train on real Colombian identity card images for higher accuracy under low-resolution conditions.
-\item \textbf{DistilBERT Fine-tuning}: Fine-tune on USCO motivation letter corpus for domain-specific NLP improvement.
-\item \textbf{React Native Mobile App}: Mobile client for students with live GPS map and push notifications.
-\item \textbf{CI/CD Pipeline}: GitHub Actions for automated testing and Docker deployment on every push to \texttt{main}.
-\item \textbf{HTTPS/TLS}: Configure SSL certificate with Certbot/Let's Encrypt on Nginx server.
+\item \textbf{CNN OCR production model}: Train with real Colombian ID card images for higher accuracy
+under low-resolution and deteriorated document conditions.
+\item \textbf{DistilBERT fine-tuning}: Fine-tune on USCO motivation letter corpus for domain-specific
+NLP improvement in Colombian academic Spanish.
+\item \textbf{React Native mobile app}: Mobile client for students with live GPS map, push notifications,
+and digital consent signatures.
+\item \textbf{CI/CD pipeline}: GitHub Actions for automated testing and Docker deployment on every
+push to the \texttt{main} branch.
+\item \textbf{HTTPS/TLS}: Configure SSL certificate with Certbot/Let's Encrypt on the Nginx server.
 \end{enumerate}
 
 \section{Future Research Lines}
+
 \begin{enumerate}[leftmargin=*]
-\item \textbf{Federated Learning}: Privacy-preserving model training across USCO faculties without sharing student data.
-\item \textbf{BETO (Spanish BERT)}: Domain-specific model for Colombian academic text NLP analysis in Spanish.
-\item \textbf{Document Fraud Detection}: CNN-based anomaly detection in uploaded identity documents.
-\item \textbf{IoT LoRaWAN}: Replace WiFi with LoRa for GPS tracking in areas without WiFi during remote excursions.
-\item \textbf{Multi-university SaaS}: Deployment model compliant with Colombian higher education regulations.
-\item \textbf{LLM Report Generation}: GPT/LLaMA for automatic academic report drafting.
+\item \textbf{Federated learning}: Privacy-preserving model training across USCO faculties without
+sharing student personal data.
+\item \textbf{BETO (Spanish BERT)}: Domain-specific model for Colombian academic text NLP in Spanish.
+\item \textbf{Document fraud detection}: CNN for anomaly detection in uploaded identity documents.
+\item \textbf{IoT LoRaWAN}: Replace WiFi with LoRa for GPS tracking in areas without WiFi during
+remote or rural field excursions.
+\item \textbf{Multi-university SaaS}: Service model compliant with Colombia's Decreto 1075/2015.
+\item \textbf{LLM report generation}: GPT/LLaMA for automatic academic report drafting for monitoring
+and practice outcomes.
 \end{enumerate}
 
-% ════════════════════════════════════════════════════════════
-\chapter*{Course Rubric Compliance}
-\addcontentsline{toc}{chapter}{Course Rubric Compliance}
-% ════════════════════════════════════════════════════════════
+\section{Course Rubric Compliance Table}
 
 \begin{center}
-\begin{tabularx}{\textwidth}{|c|X|c|c|}
+\begin{tabularx}{\textwidth}{|c|X|c|}
 \hline
 \rowcolor{tableHdr}
-\textcolor{white}{\textbf{\%}} & \textcolor{white}{\textbf{Criterion}} &
-\textcolor{white}{\textbf{Required}} & \textcolor{white}{\textbf{Met}} \\
+\textcolor{white}{\textbf{\%}} &
+\textcolor{white}{\textbf{Evaluation Criterion}} &
+\textcolor{white}{\textbf{Met}} \\
 \hline
-\rowcolor{rowOdd}10\% & English presentation (this document) & Yes & \textcolor{forestgreen}{\checkmark} \\
-\hline\rowcolor{rowEven}40\% & Comprehensive technical documentation & Yes & \textcolor{forestgreen}{\checkmark} \\
-\hline\rowcolor{rowOdd}5\% & AI classification model (MLP + DT + RF) & Yes & \textcolor{forestgreen}{\checkmark} \\
-\hline\rowcolor{rowEven}10\% & Best practices: 70-15-15 split, SMOTE, 3+ models, metrics, serialization & Yes & \textcolor{forestgreen}{\checkmark} \\
-\hline\rowcolor{rowOdd}10\% & Flask backend + PostgreSQL & Yes & \textcolor{forestgreen}{\checkmark} \\
-\hline\rowcolor{rowEven}10\% & React frontend (web) & Yes & \textcolor{forestgreen}{\checkmark} \\
-\hline\rowcolor{rowOdd}5\% & AWS cloud deployment & Yes & \textcolor{forestgreen}{\checkmark} \\
-\hline\rowcolor{rowEven}10\% & IoT (ESP32 + GPS + HTTP REST + API Key) & Yes & \textcolor{forestgreen}{\checkmark} \\
-\hline\rowcolor{rowOdd}\textbf{100\%} & \textbf{All criteria covered} & \textbf{8/8} & \textbf{\textcolor{forestgreen}{\checkmark\ Complete}} \\
+\rowcolor{rowOdd}10\% & English presentation (this document) & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowEven}40\% & Complete technical documentation & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowOdd}5\% & AI classification model ($\geq 3$ models: MLP+DT+RF) & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowEven}10\% & Best practices: 70-15-15 split, SMOTE, metrics, serialization & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowOdd}10\% & Flask backend + PostgreSQL & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowEven}10\% & React frontend (Web) & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowOdd}5\% & AWS cloud deployment & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowEven}10\% & IoT (ESP32 + GPS + HTTP REST + API Key) & \textcolor{forestgreen}{\checkmark} \\
+\hline\rowcolor{rowOdd}\textbf{100\%} & \textbf{All criteria covered (8/8)} & \textbf{\textcolor{forestgreen}{\checkmark\ Complete}} \\
 \hline
 \end{tabularx}
 \end{center}
 
 \vspace{1cm}
 \begin{center}
-\textit{Document generated on \today.\ Repository: \url{https://github.com/Krlitoxprz/SIPAM}}
+\textit{Document generated on \today\ $\cdot$ Repository: \url{https://github.com/Krlitoxprz/SIPAM}}
 \end{center}
 
 \end{document}
